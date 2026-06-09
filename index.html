@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADI Construction ERP v2.0</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+:root{--pr:#0f4c81;--prd:#0a3460;--ac:#f59e0b;--sb:#0d2137;--sbh:#1a3a56;--sba:#0f4c81;--bg:#f0f4f8;--su:#fff;--su2:#f8fafc;--br:#e2e8f0;--tx:#1e293b;--tm:#64748b;--ok:#10b981;--wn:#f59e0b;--er:#ef4444;--in:#3b82f6;--rd:10px;--sh:0 1px 4px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);display:flex;height:100vh;overflow:hidden;font-size:14px}
+.sb{width:236px;background:var(--sb);color:#fff;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.sb-logo{padding:16px 14px 10px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo .co{font-size:14px;font-weight:700}.sb-logo .tg{font-size:11px;color:#94a3b8;margin-top:1px}
+.sb-logo .bv{display:inline-block;background:var(--ac);color:#000;font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;margin-top:3px}
+.ng{padding:6px 0}.nl{font-size:10px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:1px;padding:4px 14px 2px}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;color:#94a3b8;font-size:12px;transition:all .15s;border-left:3px solid transparent}
+.ni:hover{background:var(--sbh);color:#fff}.ni.active{background:var(--sba);color:#fff;border-left-color:var(--ac)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.tb{background:var(--su);border-bottom:1px solid var(--br);padding:0 18px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-t{font-size:15px;font-weight:600}.tb-r{display:flex;align-items:center;gap:7px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.bp{background:var(--pr);color:#fff}.bp:hover{background:var(--prd)}
+.bs{background:var(--ok);color:#fff}.bd{background:var(--er);color:#fff}
+.bw{background:var(--wn);color:#000}.bo{background:transparent;color:var(--tx);border:1px solid var(--br)}.bo:hover{background:var(--bg)}
+.bpdf{background:#dc2626;color:#fff}.bprint{background:#7c3aed;color:#fff}
+.cnt{flex:1;overflow-y:auto;padding:18px}
+.pg{display:none}.pg.active{display:block}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:18px}
+.sc{background:var(--su);border-radius:var(--rd);padding:14px;box-shadow:var(--sh);border:1px solid var(--br);position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ac)}
+.sc.bl::before{background:var(--pr)}.sc.gr::before{background:var(--ok)}.sc.re::before{background:var(--er)}.sc.pu::before{background:#8b5cf6}
+.sl{font-size:10px;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.5px}
+.sv{font-size:22px;font-weight:700;color:var(--tx);margin-top:2px}.ss{font-size:11px;color:var(--tm);margin-top:1px}
+.tc{background:var(--su);border-radius:var(--rd);box-shadow:var(--sh);border:1px solid var(--br);overflow:hidden}
+.th{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--br)}
+.tt{font-size:13px;font-weight:600}
+table{width:100%;border-collapse:collapse}
+th{background:var(--su2);padding:8px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--br)}
+td{padding:9px 12px;border-bottom:1px solid var(--br);font-size:12px}
+tr:last-child td{border-bottom:none}tr:hover td{background:var(--su2)}
+.er-row td{text-align:center;color:var(--tm);padding:24px;font-style:italic}
+.bge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:600}
+.bg-ok{background:#d1fae5;color:#065f46}.bg-wn{background:#fef3c7;color:#92400e}.bg-er{background:#fee2e2;color:#991b1b}
+.bg-in{background:#dbeafe;color:#1e40af}.bg-pu{background:#ede9fe;color:#5b21b6}.bg-gy{background:#f1f5f9;color:#475569}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000}
+.mo.open{display:flex}
+.md{background:var(--su);border-radius:12px;width:550px;max-width:96vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.mh{padding:16px 20px 12px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between}
+.mh h3{font-size:14px;font-weight:600}.mc2{background:none;border:none;font-size:20px;cursor:pointer;color:var(--tm);line-height:1}
+.mb{padding:16px 20px}.mf{padding:12px 20px;border-top:1px solid var(--br);display:flex;justify-content:flex-end;gap:8px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:11px}.fgr{display:flex;flex-direction:column;gap:3px}
+.fgr.s2{grid-column:span 2}
+label{font-size:11px;font-weight:500;color:var(--tm)}
+input,select,textarea{width:100%;padding:7px 8px;border:1px solid var(--br);border-radius:7px;font-size:12px;color:var(--tx);background:var(--su);outline:none;transition:border-color .15s;font-family:inherit}
+input:focus,select:focus,textarea:focus{border-color:var(--pr)}
+input[readonly]{background:var(--su2);color:var(--tm)}textarea{resize:vertical;min-height:60px}
+.ac-row{display:flex;gap:5px}.ac-row input{flex:1}
+.ac-row button{padding:7px 9px;background:var(--su2);border:1px solid var(--br);border-radius:7px;cursor:pointer;font-size:11px;white-space:nowrap;color:var(--tx)}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.st{font-size:15px;font-weight:700}.stb{font-size:12px;color:var(--tm)}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dc{background:var(--su);border-radius:var(--rd);box-shadow:var(--sh);border:1px solid var(--br);padding:16px}
+.dc h4{font-size:11px;font-weight:600;color:var(--tm);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.bc{display:flex;flex-direction:column;gap:6px}.br2{display:flex;align-items:center;gap:7px}
+.bl2{font-size:11px;width:86px;color:var(--tm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt{flex:1;background:var(--bg);border-radius:4px;height:12px;overflow:hidden}
+.bf{height:100%;border-radius:4px;background:var(--pr);transition:width .5s}
+.bv2{font-size:10px;color:var(--tm);width:68px;text-align:right;white-space:nowrap}
+.pl-table .tr td{font-weight:700;background:var(--su2)}.pl-table .pr td{color:var(--ok);font-weight:700}.pl-table .lr td{color:var(--er);font-weight:700}
+.tr2{text-align:right}.tc2{text-align:center}.fw{font-weight:600}
+.ab{display:flex;gap:4px;flex-wrap:wrap}.pb{background:var(--bg);border-radius:4px;height:5px;overflow:hidden;min-width:60px}
+.pf{height:100%;border-radius:4px;background:var(--pr)}.mt{margin-top:12px}
+.sr{position:relative}.sr input{padding-left:26px;width:180px}.sr::before{content:'🔍';position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:11px}
+code{font-size:10px;background:var(--su2);padding:1px 4px;border-radius:3px;border:1px solid var(--br)}
+@media print{.sb,.tb,.no-print,.ab,.mo{display:none!important}.main,.cnt{overflow:visible!important;height:auto!important}.pg{display:block!important}.cnt{padding:0!important}}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="co">🏗 ADI Construction</div>
+    <div class="tg">Project ERP System</div>
+    <div class="bv">v2.0 PRO</div>
+  </div>
+  <nav class="ng"><div class="nl">Overview</div>
+    <div class="ni active" onclick="nav('dashboard')">📊 Dashboard</div>
+  </nav>
+  <nav class="ng"><div class="nl">Master Data</div>
+    <div class="ni" onclick="nav('clients')">👤 Clients</div>
+    <div class="ni" onclick="nav('projects')">🏗 Projects</div>
+    <div class="ni" onclick="nav('vendors')">🏭 Vendors</div>
+    <div class="ni" onclick="nav('materials')">🧱 Materials</div>
+    <div class="ni" onclick="nav('employees')">👷 Employees</div>
+  </nav>
+  <nav class="ng"><div class="nl">Documents</div>
+    <div class="ni" onclick="nav('contracts')">📜 Contracts</div>
+    <div class="ni" onclick="nav('workorders')">📋 Work Orders</div>
+    <div class="ni" onclick="nav('boq')">📐 BOQ / Estimation</div>
+    <div class="ni" onclick="nav('rates')">📊 Rate Analysis</div>
+    <div class="ni" onclick="nav('purchase')">🛒 Purchase Orders</div>
+  </nav>
+  <nav class="ng"><div class="nl">Finance</div>
+    <div class="ni" onclick="nav('expenses')">💸 Expenses</div>
+    <div class="ni" onclick="nav('billing')">🧾 Client Billing</div>
+    <div class="ni" onclick="nav('receipts')">💰 Receipts</div>
+    <div class="ni" onclick="nav('pnl')">📈 Profit & Loss</div>
+    <div class="ni" onclick="nav('archive')">🗂 Archived Records</div>
+  </nav>
+</aside>
+
+<div class="main">
+  <div class="tb">
+    <div class="tb-t" id="tb-title">Dashboard</div>
+    <div class="tb-r">
+      <div style="font-size:11px;color:var(--tm)" id="tb-date"></div>
+      <button class="btn bpdf no-print" onclick="exportAllPDF()">📄 Full Report PDF</button>
+      <button class="btn bo no-print" onclick="exportJSON()">⬇ Backup</button>
+    </div>
+  </div>
+  <div class="cnt">
+
+    <!-- DASHBOARD -->
+    <div id="pg-dashboard" class="pg active">
+      <div class="sg" id="dash-stats"></div>
+      <div class="dg">
+        <div class="dc"><h4>Project Status</h4><div id="ch-status" class="bc"></div></div>
+        <div class="dc"><h4>Recent Activity</h4><div id="ch-activity"></div></div>
+        <div class="dc"><h4>Top Projects by Value</h4><div id="ch-projects" class="bc"></div></div>
+        <div class="dc"><h4>Expense Categories</h4><div id="ch-expenses" class="bc"></div></div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div id="pg-clients" class="pg">
+      <div class="sh"><div><div class="st">Clients</div><div class="stb">Client master database</div></div>
+        <div style="display:flex;gap:7px"><div class="sr"><input placeholder="Search..." oninput="renderClients(this.value)"></div>
+        <button class="btn bp" onclick="openModal('client')">+ Add Client</button></div>
+      </div>
+      <div class="tc"><table><thead><tr><th>#</th><th>Client Name</th><th>Contact</th><th>Mobile</th><th>GST No.</th><th>Projects</th><th>Actions</th></tr></thead>
+      <tbody id="tb-clients"></tbody></table></div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div id="pg-projects" class="pg">
+      <div class="sh"><div><div class="st">Projects</div><div class="stb">All construction projects</div></div>
+        <div style="display:flex;gap:7px">
+          <select id="proj-filter" onchange="renderProjects()" style="padding:6px 8px;border:1px solid var(--br);border-radius:7px;font-size:12px">
+            <option value="">All Status</option><option>Planning</option><option>Running</option><option>Completed</option><option>Hold</option>
+          </select>
+          <button class="btn bp" onclick="openModal('project')">+ Add Project</button>
+        </div>
+      </div>
+      <div class="tc"><table><thead><tr><th>Code</th><th>Project Name</th><th>Client</th><th>Contract Value</th><th>Dates</th><th>Status</th><th>Progress</th><th>Actions</th></tr></thead>
+      <tbody id="tb-projects"></tbody></table></div>
+    </div>
+
+    <!-- VENDORS -->
+    <div id="pg-vendors" class="pg">
+      <div class="sh"><div><div class="st">Vendors</div><div class="stb">Suppliers & subcontractors</div></div>
+        <button class="btn bp" onclick="openModal('vendor')">+ Add Vendor</button></div>
+      <div class="tc"><table><thead><tr><th>#</th><th>Vendor Name</th><th>Contact</th><th>Mobile</th><th>GST</th><th>Category</th><th>Actions</th></tr></thead>
+      <tbody id="tb-vendors"></tbody></table></div>
+    </div>
+
+    <!-- MATERIALS -->
+    <div id="pg-materials" class="pg">
+      <div class="sh"><div><div class="st">Material Master</div><div class="stb">Materials with auto-code & rates</div></div>
+        <button class="btn bp" onclick="openModal('material')">+ Add Material</button></div>
+      <div class="tc"><table><thead><tr><th>Code</th><th>Material Name</th><th>Category</th><th>Unit</th><th>Rate (₹)</th><th>Actions</th></tr></thead>
+      <tbody id="tb-materials"></tbody></table></div>
+    </div>
+
+    <!-- EMPLOYEES -->
+    <div id="pg-employees" class="pg">
+      <div class="sh"><div><div class="st">Employees</div><div class="stb">Site team & office staff</div></div>
+        <button class="btn bp" onclick="openModal('employee')">+ Add Employee</button></div>
+      <div class="tc"><table><thead><tr><th>Code</th><th>Name</th><th>Designation</th><th>Role</th><th>Project</th><th>Salary</th><th>Actions</th></tr></thead>
+      <tbody id="tb-employees"></tbody></table></div>
+    </div>
+
+    <!-- CONTRACTS -->
+    <div id="pg-contracts" class="pg">
+      <div class="sh"><div><div class="st">Contracts</div><div class="stb">Client-ADI Construction agreements</div></div>
+        <button class="btn bp" onclick="openModal('contract')">+ New Contract</button></div>
+      <div class="tc"><table><thead><tr><th>Contract No.</th><th>Project</th><th>Client</th><th>Value</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="tb-contracts"></tbody></table></div>
+    </div>
+
+    <!-- WORK ORDERS -->
+    <div id="pg-workorders" class="pg">
+      <div class="sh"><div><div class="st">Work Orders</div><div class="stb">Site work orders issued to contractors</div></div>
+        <button class="btn bp" onclick="openModal('wo')">+ New Work Order</button></div>
+      <div class="tc"><table><thead><tr><th>WO No.</th><th>Project</th><th>Issued To</th><th>WO Value</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="tb-wo"></tbody></table></div>
+    </div>
+
+    <!-- BOQ -->
+    <div id="pg-boq" class="pg">
+      <div class="sh"><div><div class="st">BOQ / Estimation</div><div class="stb">Bill of Quantities per project</div></div>
+        <div style="display:flex;gap:7px">
+          <select id="boq-filter" onchange="renderBOQ()" style="padding:6px 8px;border:1px solid var(--br);border-radius:7px;font-size:12px;width:180px"><option value="">All Projects</option></select>
+          <button class="btn bpdf no-print" onclick="exportBOQPDF()">📄 PDF</button>
+          <button class="btn bp" onclick="openModal('boq')">+ Add Item</button>
+        </div>
+      </div>
+      <div class="tc"><table><thead><tr><th>Item No.</th><th>Project</th><th>Description</th><th>Unit</th><th>Qty</th><th>Rate (₹)</th><th>Amount (₹)</th><th>Actions</th></tr></thead>
+      <tbody id="tb-boq"></tbody>
+      <tfoot><tr><td colspan="6" style="padding:9px 12px;font-weight:600;text-align:right;background:var(--su2)">Total BOQ:</td><td style="padding:9px 12px;font-weight:700;background:var(--su2)" id="boq-total">₹0</td><td style="background:var(--su2)"></td></tr></tfoot>
+      </table></div>
+    </div>
+
+    <!-- RATE ANALYSIS -->
+    <div id="pg-rates" class="pg">
+      <div class="sh"><div><div class="st">Rate Analysis Library</div><div class="stb">Material + Labour + Machinery cost breakdown</div></div>
+        <div style="display:flex;gap:7px">
+          <button class="btn bpdf no-print" onclick="exportRatePDF()">📄 PDF</button>
+          <button class="btn bp" onclick="openModal('rate')">+ Add Rate</button>
+        </div>
+      </div>
+      <div class="tc"><table><thead><tr><th>Code</th><th>Item Name</th><th>Unit</th><th>Material</th><th>Labour</th><th>Machinery</th><th>OH%</th><th>Total Rate</th><th>Actions</th></tr></thead>
+      <tbody id="tb-rates"></tbody></table></div>
+    </div>
+
+    <!-- PURCHASE -->
+    <div id="pg-purchase" class="pg">
+      <div class="sh"><div><div class="st">Purchase Orders</div><div class="stb">Material procurement</div></div>
+        <button class="btn bp" onclick="openModal('po')">+ New PO</button></div>
+      <div class="tc"><table><thead><tr><th>PO No.</th><th>Vendor</th><th>Project</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="tb-purchase"></tbody></table></div>
+    </div>
+
+    <!-- EXPENSES -->
+    <div id="pg-expenses" class="pg">
+      <div class="sh"><div><div class="st">Site Expenses</div><div class="stb">Labour, diesel, equipment & misc</div></div>
+        <div style="display:flex;gap:7px">
+          <button class="btn bpdf no-print" onclick="exportExpPDF()">📄 PDF</button>
+          <button class="btn bp" onclick="openModal('expense')">+ Add Expense</button>
+        </div>
+      </div>
+      <div class="tc"><table><thead><tr><th>Date</th><th>Project</th><th>Category</th><th>Description</th><th>Amount (₹)</th><th>Paid To</th><th>Actions</th></tr></thead>
+      <tbody id="tb-expenses"></tbody>
+      <tfoot><tr><td colspan="4" style="padding:9px 12px;font-weight:600;text-align:right;background:var(--su2)">Total:</td><td style="padding:9px 12px;font-weight:700;background:var(--su2)" id="exp-total">₹0</td><td colspan="2" style="background:var(--su2)"></td></tr></tfoot>
+      </table></div>
+    </div>
+
+    <!-- BILLING -->
+    <div id="pg-billing" class="pg">
+      <div class="sh"><div><div class="st">Client Billing</div><div class="stb">RA Bills & Tax Invoices</div></div>
+        <button class="btn bp" onclick="openModal('bill')">+ Create Bill</button></div>
+      <div class="tc"><table><thead><tr><th>Bill No.</th><th>Project</th><th>Client</th><th>Date</th><th>Gross</th><th>Ret%</th><th>GST%</th><th>Net Amount</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="tb-billing"></tbody>
+      <tfoot><tr><td colspan="7" style="padding:9px 12px;font-weight:600;text-align:right;background:var(--su2)">Total Net:</td><td style="padding:9px 12px;font-weight:700;background:var(--su2)" id="bill-total">₹0</td><td colspan="2" style="background:var(--su2)"></td></tr></tfoot>
+      </table></div>
+    </div>
+
+    <!-- RECEIPTS -->
+    <div id="pg-receipts" class="pg">
+      <div class="sh"><div><div class="st">Receipts</div><div class="stb">Client payment collections</div></div>
+        <div style="display:flex;gap:7px">
+          <button class="btn bpdf no-print" onclick="exportRecPDF()">📄 PDF</button>
+          <button class="btn bp" onclick="openModal('receipt')">+ Add Receipt</button>
+        </div>
+      </div>
+      <div class="tc"><table><thead><tr><th>Date</th><th>Project</th><th>Client</th><th>Bill Ref.</th><th>Amount</th><th>Mode</th><th>Ref No.</th><th>Actions</th></tr></thead>
+      <tbody id="tb-receipts"></tbody>
+      <tfoot><tr><td colspan="4" style="padding:9px 12px;font-weight:600;text-align:right;background:var(--su2)">Total Collected:</td><td style="padding:9px 12px;font-weight:700;background:var(--su2)" id="rec-total">₹0</td><td colspan="3" style="background:var(--su2)"></td></tr></tfoot>
+      </table></div>
+    </div>
+
+    <!-- P&L -->
+    <div id="pg-pnl" class="pg">
+      <div class="sh"><div><div class="st">Profit & Loss Report</div><div class="stb">Project-wise profitability</div></div>
+        <div style="display:flex;gap:7px">
+          <select id="pnl-filter" onchange="renderPnL()" style="padding:6px 8px;border:1px solid var(--br);border-radius:7px;font-size:12px;width:180px"><option value="">All Projects</option></select>
+          <button class="btn bpdf no-print" onclick="exportPnLPDF()">📄 PDF</button>
+        </div>
+      </div>
+      <div id="pnl-content"></div>
+    </div>
+
+    <!-- ARCHIVE -->
+    <div id="pg-archive" class="pg">
+      <div class="sh"><div><div class="st">Archived Records</div><div class="stb">All password-protected deleted entries</div></div>
+        <div style="display:flex;gap:7px">
+          <select id="arch-filter" onchange="renderArchive()" style="padding:6px 8px;border:1px solid var(--br);border-radius:7px;font-size:12px">
+            <option value="">All Types</option><option>client</option><option>project</option><option>vendor</option><option>material</option><option>employee</option><option>contract</option><option>wo</option><option>boq</option><option>rate</option><option>po</option><option>expense</option><option>bill</option><option>receipt</option>
+          </select>
+          <button class="btn bd" onclick="clearArchive()">🗑 Clear All Archive</button>
+        </div>
+      </div>
+      <div class="tc"><table><thead><tr><th>Type</th><th>Record Name / No.</th><th>Deleted On</th><th>Deleted By</th><th>Key Details</th><th>Actions</th></tr></thead>
+      <tbody id="tb-archive"></tbody></table></div>
+    </div>
+
+
+  </div>
+</div>
+
+<!-- ===== MODALS ===== -->
+<!-- CLIENT -->
+<div class="mo" id="mo-client"><div class="md">
+  <div class="mh"><h3>Client</h3><button class="mc2" onclick="closeModal('client')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr s2"><label>Client Name *</label><input id="c-name" placeholder="Company or individual name"></div>
+    <div class="fgr"><label>Contact Person</label><input id="c-contact"></div>
+    <div class="fgr"><label>Mobile</label><input id="c-mobile"></div>
+    <div class="fgr"><label>Email</label><input id="c-email"></div>
+    <div class="fgr"><label>GST Number</label><input id="c-gst"></div>
+    <div class="fgr s2"><label>Address</label><textarea id="c-address"></textarea></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('client')">Cancel</button><button class="btn bp" onclick="saveClient()">Save Client</button></div>
+</div></div>
+
+<!-- PROJECT -->
+<div class="mo" id="mo-project"><div class="md">
+  <div class="mh"><h3>Project</h3><button class="mc2" onclick="closeModal('project')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr"><label>Project Code (Auto)</label><div class="ac-row"><input id="p-code" readonly><button onclick="genCode('p-code','PRJ')">↻ Gen</button></div></div>
+    <div class="fgr"><label>Status</label><select id="p-status"><option>Planning</option><option>Running</option><option>Completed</option><option>Hold</option></select></div>
+    <div class="fgr s2"><label>Project Name *</label><input id="p-name"></div>
+    <div class="fgr"><label>Client</label><select id="p-client"><option value="">Select Client</option></select></div>
+    <div class="fgr"><label>Location</label><input id="p-location"></div>
+    <div class="fgr"><label>Start Date</label><input id="p-start" type="date"></div>
+    <div class="fgr"><label>Completion Date</label><input id="p-end" type="date"></div>
+    <div class="fgr"><label>Contract Value (₹)</label><input id="p-value" type="number"></div>
+    <div class="fgr"><label>Progress %</label><input id="p-progress" type="number" min="0" max="100"></div>
+    <div class="fgr s2"><label>Project Manager</label><input id="p-manager"></div>
+    <div class="fgr s2"><label>Remarks</label><textarea id="p-remarks"></textarea></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('project')">Cancel</button><button class="btn bp" onclick="saveProject()">Save Project</button></div>
+</div></div>
+
+<!-- VENDOR -->
+<div class="mo" id="mo-vendor"><div class="md">
+  <div class="mh"><h3>Vendor</h3><button class="mc2" onclick="closeModal('vendor')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr s2"><label>Vendor Name *</label><input id="v-name"></div>
+    <div class="fgr"><label>Contact Person</label><input id="v-contact"></div>
+    <div class="fgr"><label>Mobile</label><input id="v-mobile"></div>
+    <div class="fgr"><label>GST No.</label><input id="v-gst"></div>
+    <div class="fgr"><label>Category</label><select id="v-cat"><option>Material Supplier</option><option>Labour Contractor</option><option>Equipment Hire</option><option>Transport</option><option>Subcontractor</option><option>Other</option></select></div>
+    <div class="fgr s2"><label>Address</label><textarea id="v-address"></textarea></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('vendor')">Cancel</button><button class="btn bp" onclick="saveVendor()">Save Vendor</button></div>
+</div></div>
+
+<!-- MATERIAL -->
+<div class="mo" id="mo-material"><div class="md">
+  <div class="mh"><h3>Material</h3><button class="mc2" onclick="closeModal('material')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr"><label>Material Code (Auto)</label><div class="ac-row"><input id="m-code" readonly><button onclick="genCode('m-code','MAT')">↻ Gen</button></div></div>
+    <div class="fgr"><label>Category <button type="button" onclick="openCatMgr()" style="font-size:10px;padding:1px 6px;background:var(--pr);color:#fff;border:none;border-radius:4px;cursor:pointer;margin-left:4px">⚙ Manage</button></label><select id="m-cat"></select></div>
+    <div class="fgr s2"><label>Material Name *</label><input id="m-name"></div>
+    <div class="fgr"><label>Unit</label><select id="m-unit"><option value="Sqft">Sqft — Square Foot</option>
+<option value="Sqm">Sqm — Square Metre</option>
+<option value="Cft">Cft — Cubic Foot</option>
+<option value="Cum">Cum — Cubic Metre (m³)</option>
+<option value="Rft">Rft — Running Foot</option>
+<option value="Rmt">Rmt — Running Metre</option>
+<option value="Kg">Kg — Kilogram</option>
+<option value="MT">MT — Metric Ton</option>
+<option value="Nos">Nos — Numbers</option>
+<option value="Set">Set</option>
+<option value="Pair">Pair</option>
+<option value="Bag">Bag — Cement Bag (50 Kg)</option>
+<option value="Ltr">Ltr — Litre</option>
+<option value="KL">KL — Kilo Litre</option>
+<option value="Trip">Trip — Per Trip</option>
+<option value="Day">Day — Per Day</option>
+<option value="Hr">Hr — Hour</option>
+<option value="Month">Month — Per Month</option>
+<option value="Lot">Lot — Lump Sum Lot</option>
+<option value="LS">LS — Lump Sum</option>
+<option value="Job">Job — Per Job</option></select></div>
+    <div class="fgr"><label>Rate (₹)</label><input id="m-rate" type="number"></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('material')">Cancel</button><button class="btn bp" onclick="saveMaterial()">Save Material</button></div>
+</div></div>
+
+<!-- EMPLOYEE -->
+<div class="mo" id="mo-employee"><div class="md">
+  <div class="mh"><h3>Employee</h3><button class="mc2" onclick="closeModal('employee')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr"><label>Employee Code (Auto)</label><div class="ac-row"><input id="e-code" readonly><button onclick="genCode('e-code','EMP')">↻ Gen</button></div></div>
+    <div class="fgr"><label>Role</label><select id="e-role"><option>Admin</option><option>Director</option><option>Project Manager</option><option>Site Engineer</option><option>Supervisor</option><option>Accounts</option><option>Purchase</option></select></div>
+    <div class="fgr s2"><label>Full Name *</label><input id="e-name"></div>
+    <div class="fgr"><label>Designation</label><input id="e-designation"></div>
+    <div class="fgr"><label>Mobile</label><input id="e-mobile"></div>
+    <div class="fgr"><label>Project Assigned</label><select id="e-project"><option value="">Not Assigned</option></select></div>
+    <div class="fgr"><label>Salary (₹/month)</label><input id="e-salary" type="number"></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('employee')">Cancel</button><button class="btn bp" onclick="saveEmployee()">Save Employee</button></div>
+</div></div>
+
+<!-- CONTRACT -->
+<div class="mo" id="mo-contract"><div class="md">
+  <div class="mh"><h3>Contract Agreement</h3><button class="mc2" onclick="closeModal('contract')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr"><label>Contract No. (Auto)</label><div class="ac-row"><input id="ct-no" readonly><button onclick="genCode('ct-no','CTR')">↻ Gen</button></div></div>
+    <div class="fgr"><label>Contract Date</label><input id="ct-date" type="date"></div>
+    <div class="fgr"><label>Project *</label><select id="ct-proj" onchange="fillCtClient()"><option value="">Select</option></select></div>
+    <div class="fgr"><label>Client</label><input id="ct-client" readonly></div>
+    <div class="fgr"><label>Contract Value (₹)</label><input id="ct-value" type="number"></div>
+    <div class="fgr"><label>Status</label><select id="ct-status"><option>Draft</option><option>Active</option><option>Completed</option><option>Terminated</option></select></div>
+    <div class="fgr"><label>Retention %</label><input id="ct-ret" type="number" value="5"></div>
+    <div class="fgr"><label>Advance %</label><input id="ct-adv" type="number" value="10"></div>
+    <div class="fgr s2"><label>Scope of Work</label><textarea id="ct-scope" placeholder="Detailed scope..."></textarea></div>
+    <div class="fgr s2"><label>Terms & Conditions</label><textarea id="ct-terms" placeholder="Payment terms, penalties, milestones..."></textarea></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('contract')">Cancel</button><button class="btn bp" onclick="saveContract()">Save Contract</button></div>
+</div></div>
+
+<!-- WORK ORDER -->
+<div class="mo" id="mo-wo"><div class="md">
+  <div class="mh"><h3>Work Order</h3><button class="mc2" onclick="closeModal('wo')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr"><label>WO No. (Auto)</label><div class="ac-row"><input id="wo-no" readonly><button onclick="genCode('wo-no','WO')">↻ Gen</button></div></div>
+    <div class="fgr"><label>WO Date</label><input id="wo-date" type="date"></div>
+    <div class="fgr"><label>Project *</label><select id="wo-proj"><option value="">Select</option></select></div>
+    <div class="fgr"><label>Issued To (Vendor)</label><select id="wo-vendor"><option value="">Select Vendor</option></select></div>
+    <div class="fgr"><label>WO Value (₹)</label><input id="wo-value" type="number"></div>
+    <div class="fgr"><label>Retention %</label><input id="wo-ret" type="number" value="5"></div>
+    <div class="fgr"><label>Start Date</label><input id="wo-start" type="date"></div>
+    <div class="fgr"><label>Completion Date</label><input id="wo-end" type="date"></div>
+    <div class="fgr"><label>Status</label><select id="wo-status"><option>Active</option><option>Completed</option><option>Cancelled</option></select></div>
+    <div class="fgr"><label>Payment Terms</label><input id="wo-pay" placeholder="e.g. 30 days after RA bill"></div>
+    <div class="fgr s2"><label>Scope / Description *</label><textarea id="wo-scope" placeholder="Detailed scope of work..."></textarea></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('wo')">Cancel</button><button class="btn bp" onclick="saveWO()">Save WO</button></div>
+</div></div>
+
+<!-- BOQ -->
+<div class="mo" id="mo-boq"><div class="md">
+  <div class="mh"><h3>BOQ Item</h3><button class="mc2" onclick="closeModal('boq')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr"><label>Item No.</label><input id="b-no" placeholder="e.g. 1.1"></div>
+    <div class="fgr"><label>Project *</label><select id="b-proj"><option value="">Select</option></select></div>
+    <div class="fgr s2"><label>Description *</label><input id="b-desc"></div>
+    <div class="fgr"><label>Unit</label><select id="b-unit"><option value="Sqft">Sqft — Square Foot</option>
+<option value="Sqm">Sqm — Square Metre</option>
+<option value="Cft">Cft — Cubic Foot</option>
+<option value="Cum">Cum — Cubic Metre (m³)</option>
+<option value="Rft">Rft — Running Foot</option>
+<option value="Rmt">Rmt — Running Metre</option>
+<option value="Kg">Kg — Kilogram</option>
+<option value="MT">MT — Metric Ton</option>
+<option value="Nos">Nos — Numbers</option>
+<option value="Set">Set</option>
+<option value="Pair">Pair</option>
+<option value="Bag">Bag — Cement Bag (50 Kg)</option>
+<option value="Ltr">Ltr — Litre</option>
+<option value="KL">KL — Kilo Litre</option>
+<option value="Trip">Trip — Per Trip</option>
+<option value="Day">Day — Per Day</option>
+<option value="Hr">Hr — Hour</option>
+<option value="Month">Month — Per Month</option>
+<option value="Lot">Lot — Lump Sum Lot</option>
+<option value="LS">LS — Lump Sum</option>
+<option value="Job">Job — Per Job</option></select></div>
+    <div class="fgr"><label>Quantity</label><input id="b-qty" type="number" oninput="calcBOQ()"></div>
+    <div class="fgr"><label>Rate (₹)</label><input id="b-rate" type="number" oninput="calcBOQ()"></div>
+    <div class="fgr"><label>Amount (₹)</label><input id="b-amt" readonly></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('boq')">Cancel</button><button class="btn bp" onclick="saveBOQ()">Save Item</button></div>
+</div></div>
+
+<!-- RATE ANALYSIS -->
+<div class="mo" id="mo-rate"><div class="md">
+  <div class="mh"><h3>Rate Analysis</h3><button class="mc2" onclick="closeModal('rate')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr"><label>Item Code (Auto)</label><div class="ac-row"><input id="r-code" readonly><button onclick="genCode('r-code','RA')">↻ Gen</button></div></div>
+    <div class="fgr"><label>Unit</label><select id="r-unit"><option value="Sqft">Sqft — Square Foot</option>
+<option value="Sqm">Sqm — Square Metre</option>
+<option value="Cft">Cft — Cubic Foot</option>
+<option value="Cum">Cum — Cubic Metre (m³)</option>
+<option value="Rft">Rft — Running Foot</option>
+<option value="Rmt">Rmt — Running Metre</option>
+<option value="Kg">Kg — Kilogram</option>
+<option value="MT">MT — Metric Ton</option>
+<option value="Nos">Nos — Numbers</option>
+<option value="Set">Set</option>
+<option value="Pair">Pair</option>
+<option value="Bag">Bag — Cement Bag (50 Kg)</option>
+<option value="Ltr">Ltr — Litre</option>
+<option value="KL">KL — Kilo Litre</option>
+<option value="Trip">Trip — Per Trip</option>
+<option value="Day">Day — Per Day</option>
+<option value="Hr">Hr — Hour</option>
+<option value="Month">Month — Per Month</option>
+<option value="Lot">Lot — Lump Sum Lot</option>
+<option value="LS">LS — Lump Sum</option>
+<option value="Job">Job — Per Job</option></select></div>
+    <div class="fgr s2"><label>Item Name *</label><input id="r-name"></div>
+    <div class="fgr"><label>Material Cost (₹)</label><input id="r-mat" type="number" oninput="calcRate()"></div>
+    <div class="fgr"><label>Labour Cost (₹)</label><input id="r-lab" type="number" oninput="calcRate()"></div>
+    <div class="fgr"><label>Machinery Cost (₹)</label><input id="r-mac" type="number" oninput="calcRate()"></div>
+    <div class="fgr"><label>Overhead %</label><input id="r-oh" type="number" value="10" oninput="calcRate()"></div>
+    <div class="fgr"><label>Total Rate (₹)</label><input id="r-total" readonly></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('rate')">Cancel</button><button class="btn bp" onclick="saveRate()">Save Rate</button></div>
+</div></div>
+
+<!-- PO -->
+<div class="mo" id="mo-po"><div class="md">
+  <div class="mh"><h3>Purchase Order</h3><button class="mc2" onclick="closeModal('po')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr"><label>PO No. (Auto)</label><div class="ac-row"><input id="po-no" readonly><button onclick="genCode('po-no','PO')">↻ Gen</button></div></div>
+    <div class="fgr"><label>PO Date</label><input id="po-date" type="date"></div>
+    <div class="fgr"><label>Vendor *</label><select id="po-vendor"><option value="">Select</option></select></div>
+    <div class="fgr"><label>Project *</label><select id="po-proj"><option value="">Select</option></select></div>
+    <div class="fgr"><label>Total Amount (₹)</label><input id="po-amt" type="number"></div>
+    <div class="fgr"><label>Status</label><select id="po-status"><option>Pending</option><option>Delivered</option><option>Partial</option><option>Cancelled</option></select></div>
+    <div class="fgr s2"><label>Items / Materials</label><textarea id="po-items" placeholder="List of materials..."></textarea></div>
+    <div class="fgr s2"><label>Delivery Terms</label><input id="po-terms" placeholder="e.g. Delivery in 7 days at site"></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('po')">Cancel</button><button class="btn bp" onclick="savePO()">Save PO</button></div>
+</div></div>
+
+<!-- EXPENSE -->
+<div class="mo" id="mo-expense"><div class="md">
+  <div class="mh"><h3>Expense</h3><button class="mc2" onclick="closeModal('expense')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr"><label>Date *</label><input id="ex-date" type="date"></div>
+    <div class="fgr"><label>Project *</label><select id="ex-proj"><option value="">Select</option></select></div>
+    <div class="fgr"><label>Category *</label><select id="ex-cat"><option>Labour Payment</option><option>Diesel</option><option>Machinery Hire</option><option>Transportation</option><option>Site Expenses</option><option>Accommodation</option><option>Miscellaneous</option></select></div>
+    <div class="fgr"><label>Amount (₹) *</label><input id="ex-amt" type="number"></div>
+    <div class="fgr s2"><label>Description</label><input id="ex-desc"></div>
+    <div class="fgr s2"><label>Paid To</label><input id="ex-paid"></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('expense')">Cancel</button><button class="btn bp" onclick="saveExpense()">Save Expense</button></div>
+</div></div>
+
+<!-- BILL -->
+<div class="mo" id="mo-bill"><div class="md">
+  <div class="mh"><h3>Client Bill / RA Bill</h3><button class="mc2" onclick="closeModal('bill')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr"><label>Bill No. (Auto)</label><div class="ac-row"><input id="bi-no" readonly><button onclick="genCode('bi-no','BILL')">↻ Gen</button></div></div>
+    <div class="fgr"><label>Bill Date</label><input id="bi-date" type="date"></div>
+    <div class="fgr"><label>Project *</label><select id="bi-proj" onchange="fillBillClient()"><option value="">Select</option></select></div>
+    <div class="fgr"><label>Client</label><input id="bi-client" readonly></div>
+    <div class="fgr"><label>Gross Amount (₹)</label><input id="bi-gross" type="number" oninput="calcBill()"></div>
+    <div class="fgr"><label>Retention %</label><input id="bi-ret" type="number" value="5" oninput="calcBill()"></div>
+    <div class="fgr"><label>GST %</label><input id="bi-gst" type="number" value="18" oninput="calcBill()"></div>
+    <div class="fgr"><label>Net Amount (₹)</label><input id="bi-net" readonly></div>
+    <div class="fgr"><label>Status</label><select id="bi-status"><option>Submitted</option><option>Approved</option><option>Paid</option><option>Partial</option></select></div>
+    <div class="fgr"><label>Remarks</label><input id="bi-remarks"></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('bill')">Cancel</button><button class="btn bp" onclick="saveBill()">Save Bill</button></div>
+</div></div>
+
+<!-- RECEIPT -->
+<div class="mo" id="mo-receipt"><div class="md">
+  <div class="mh"><h3>Payment Receipt</h3><button class="mc2" onclick="closeModal('receipt')">×</button></div>
+  <div class="mb"><div class="fg">
+    <div class="fgr"><label>Date *</label><input id="rc-date" type="date"></div>
+    <div class="fgr"><label>Project *</label><select id="rc-proj"><option value="">Select</option></select></div>
+    <div class="fgr"><label>Client Name</label><input id="rc-client"></div>
+    <div class="fgr"><label>Bill Reference</label><input id="rc-ref"></div>
+    <div class="fgr"><label>Amount (₹) *</label><input id="rc-amt" type="number"></div>
+    <div class="fgr"><label>Payment Mode</label><select id="rc-mode"><option>NEFT</option><option>RTGS</option><option>Cheque</option><option>Cash</option><option>IMPS</option></select></div>
+    <div class="fgr s2"><label>Transaction / Cheque No.</label><input id="rc-txn"></div>
+  </div></div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('receipt')">Cancel</button><button class="btn bp" onclick="saveReceipt()">Save Receipt</button></div>
+</div></div>
+<script>
+// ===== CORE =====
+const DB={get:k=>JSON.parse(localStorage.getItem('adi_'+k)||'[]'),set:(k,v)=>localStorage.setItem('adi_'+k,JSON.stringify(v))};
+let EID={};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
+const td=()=>new Date().toISOString().split('T')[0];
+const fmt=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});
+const fmtN=n=>Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});
+const gv=id=>{const e=document.getElementById(id);return e?e.value.trim():'';}
+const sv=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||'';}
+
+// ===== AUTO CODE =====
+function genCode(fid,pre){
+  const yr=new Date().getFullYear().toString().slice(2);
+  const mo=String(new Date().getMonth()+1).padStart(2,'0');
+  const seq=String(Math.floor(Math.random()*900)+100);
+  document.getElementById(fid).value=`${pre}-${yr}${mo}-${seq}`;
+}
+function autoCode(pre){
+  const yr=new Date().getFullYear().toString().slice(2);
+  const mo=String(new Date().getMonth()+1).padStart(2,'0');
+  const seq=String(Math.floor(Math.random()*900)+100);
+  return`${pre}-${yr}${mo}-${seq}`;
+}
+
+// ===== NAV =====
+const PT={dashboard:'Dashboard',clients:'Clients',projects:'Projects',vendors:'Vendors',materials:'Material Master',employees:'Employees',contracts:'Contracts',workorders:'Work Orders',boq:'BOQ / Estimation',rates:'Rate Analysis',purchase:'Purchase Orders',expenses:'Site Expenses',billing:'Client Billing',receipts:'Receipts',pnl:'Profit & Loss',archive:'Archived Records'};
+function nav(p){
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
+  const pg=document.getElementById('pg-'+p);if(pg)pg.classList.add('active');
+  document.querySelectorAll('.ni').forEach(x=>{if(x.getAttribute('onclick')==="nav('"+p+"')")x.classList.add('active');});
+  document.getElementById('tb-title').textContent=PT[p]||p;
+  const R={dashboard:renderDash,clients:renderClients,projects:renderProjects,vendors:renderVendors,materials:renderMaterials,employees:renderEmployees,contracts:renderContracts,workorders:renderWOs,boq:()=>{popProj();renderBOQ()},rates:renderRates,purchase:()=>{popProj();renderPurchase()},expenses:()=>{popProj();renderExpenses()},billing:()=>{popProj();renderBilling()},receipts:()=>{popProj();renderReceipts()},pnl:()=>{popProj();renderPnL()},archive:renderArchive};
+  if(R[p])R[p]();
+}
+
+// ===== MODAL =====
+function openModal(type,id){
+  EID[type]=id||null;
+  popProj();popClientSel();popVendorSel();popEmpProj();
+  const m=document.getElementById('mo-'+type);
+  if(type==='material')popMCat();
+  if(id){
+    const key={po:'purchases',wo:'workorders',contract:'contracts'}[type]||(type+'s');
+    const d=DB.get(key).find(x=>x.id===id);
+    if(d)fillForm(type,d);
+  }else{
+    const acm={project:'p-code',material:'m-code',employee:'e-code',contract:'ct-no',wo:'wo-no',rate:'r-code',po:'po-no',bill:'bi-no'};
+    const prm={project:'PRJ',material:'MAT',employee:'EMP',contract:'CTR',wo:'WO',rate:'RA',po:'PO',bill:'BILL'};
+    if(acm[type]){const el=document.getElementById(acm[type]);if(el&&!el.value)el.value=autoCode(prm[type]);}
+    ['po-date','ex-date','bi-date','rc-date','ct-date','wo-date'].forEach(fid=>{const el=document.getElementById(fid);if(el&&!el.value)el.value=td();});
+  }
+  if(m)m.classList.add('open');
+}
+function closeModal(t){
+  const m=document.getElementById('mo-'+t);if(m)m.classList.remove('open');
+  m&&m.querySelectorAll('input:not([readonly]),textarea').forEach(e=>e.value='');
+  EID[t]=null;
+}
+function fillForm(t,d){
+  const f=sv;
+  if(t==='client'){f('c-name',d.name);f('c-contact',d.contact);f('c-mobile',d.mobile);f('c-email',d.email);f('c-gst',d.gst);f('c-address',d.address);}
+  if(t==='project'){f('p-code',d.code);f('p-name',d.name);f('p-client',d.client);f('p-location',d.location);f('p-start',d.start);f('p-end',d.end);f('p-value',d.value);f('p-status',d.status);f('p-progress',d.progress);f('p-manager',d.manager);f('p-remarks',d.remarks);}
+  if(t==='vendor'){f('v-name',d.name);f('v-contact',d.contact);f('v-mobile',d.mobile);f('v-gst',d.gst);f('v-cat',d.category);f('v-address',d.address);}
+  if(t==='material'){f('m-code',d.code);f('m-name',d.name);f('m-cat',d.category);f('m-unit',d.unit);f('m-rate',d.rate);}
+  if(t==='employee'){f('e-code',d.code);f('e-name',d.name);f('e-designation',d.dsg);f('e-mobile',d.mobile);f('e-role',d.role);f('e-project',d.project||'');f('e-salary',d.salary);}
+  if(t==='contract'){f('ct-no',d.no);f('ct-date',d.date);f('ct-proj',d.project);f('ct-client',d.client);f('ct-value',d.value);f('ct-status',d.status);f('ct-ret',d.ret);f('ct-adv',d.adv);f('ct-scope',d.scope);f('ct-terms',d.terms);}
+  if(t==='wo'){f('wo-no',d.no);f('wo-date',d.date);f('wo-proj',d.project);f('wo-vendor',d.vendor);f('wo-value',d.value);f('wo-ret',d.ret);f('wo-start',d.start);f('wo-end',d.end);f('wo-status',d.status);f('wo-pay',d.pay);f('wo-scope',d.scope);}
+  if(t==='boq'){f('b-no',d.no);f('b-proj',d.project);f('b-desc',d.desc);f('b-unit',d.unit);f('b-qty',d.qty);f('b-rate',d.rate);f('b-amt',d.amt);}
+  if(t==='rate'){f('r-code',d.code);f('r-name',d.name);f('r-unit',d.unit);f('r-mat',d.mat);f('r-lab',d.lab);f('r-mac',d.mac);f('r-oh',d.oh);f('r-total',d.total);}
+  if(t==='po'){f('po-no',d.no);f('po-date',d.date);f('po-vendor',d.vendor);f('po-proj',d.project);f('po-amt',d.amt);f('po-status',d.status);f('po-items',d.items);f('po-terms',d.terms);}
+  if(t==='expense'){f('ex-date',d.date);f('ex-proj',d.project);f('ex-cat',d.category);f('ex-amt',d.amt);f('ex-desc',d.desc);f('ex-paid',d.paid);}
+  if(t==='bill'){f('bi-no',d.no);f('bi-date',d.date);f('bi-proj',d.project);f('bi-client',d.client);f('bi-gross',d.gross);f('bi-ret',d.ret);f('bi-gst',d.gst);f('bi-net',d.net);f('bi-status',d.status);f('bi-remarks',d.remarks);}
+  if(t==='receipt'){f('rc-date',d.date);f('rc-proj',d.project);f('rc-client',d.client);f('rc-ref',d.ref);f('rc-amt',d.amt);f('rc-mode',d.mode);f('rc-txn',d.txn);}
+}
+
+// ===== POPULATE SELECTS =====
+function popProj(){
+  const projs=DB.get('projects');
+  ['b-proj','po-proj','ex-proj','bi-proj','rc-proj','wo-proj','ct-proj','boq-filter','pnl-filter'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const cur=el.value,isF=id.includes('filter');
+    el.innerHTML=isF?'<option value="">All Projects</option>':'<option value="">Select Project</option>';
+    projs.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;el.appendChild(o);});
+    if(cur)el.value=cur;
+  });
+}
+function popClientSel(){
+  const clients=DB.get('clients');
+  const el=document.getElementById('p-client');if(!el)return;
+  const cur=el.value;el.innerHTML='<option value="">Select Client</option>';
+  clients.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;el.appendChild(o);});
+  if(cur)el.value=cur;
+}
+function popVendorSel(){
+  const vendors=DB.get('vendors');
+  ['po-vendor','wo-vendor'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const cur=el.value;el.innerHTML='<option value="">Select Vendor</option>';
+    vendors.forEach(v=>{const o=document.createElement('option');o.value=v.id;o.textContent=v.name;el.appendChild(o);});
+    if(cur)el.value=cur;
+  });
+}
+function popEmpProj(){
+  const projs=DB.get('projects');
+  const el=document.getElementById('e-project');if(!el)return;
+  const cur=el.value;el.innerHTML='<option value="">Not Assigned</option>';
+  projs.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;el.appendChild(o);});
+  if(cur)el.value=cur;
+}
+
+// ===== SAVE =====
+function upsert(list,id,obj){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]=obj;else list.push(obj);}
+function saveClient(){
+  const n=gv('c-name');if(!n)return alert('Client name required');
+  const list=DB.get('clients'),id=EID.client||uid();
+  upsert(list,id,{id,name:n,contact:gv('c-contact'),mobile:gv('c-mobile'),email:gv('c-email'),gst:gv('c-gst'),address:gv('c-address')});
+  DB.set('clients',list);closeModal('client');renderClients();renderDash();
+popMCat();log('Client "'+n+'" saved');
+}
+function saveProject(){
+  const n=gv('p-name');if(!n)return alert('Project name required');
+  const list=DB.get('projects'),id=EID.project||uid();
+  upsert(list,id,{id,code:gv('p-code'),name:n,client:gv('p-client'),location:gv('p-location'),start:gv('p-start'),end:gv('p-end'),value:+gv('p-value')||0,status:gv('p-status')||'Planning',progress:+gv('p-progress')||0,manager:gv('p-manager'),remarks:gv('p-remarks')});
+  DB.set('projects',list);closeModal('project');renderProjects();renderDash();log('Project "'+n+'" saved');
+}
+function saveVendor(){
+  const n=gv('v-name');if(!n)return alert('Vendor name required');
+  const list=DB.get('vendors'),id=EID.vendor||uid();
+  upsert(list,id,{id,name:n,contact:gv('v-contact'),mobile:gv('v-mobile'),gst:gv('v-gst'),category:gv('v-cat'),address:gv('v-address')});
+  DB.set('vendors',list);closeModal('vendor');renderVendors();
+}
+function saveMaterial(){
+  const n=gv('m-name');if(!n)return alert('Name required');
+  const list=DB.get('materials'),id=EID.material||uid();
+  upsert(list,id,{id,code:gv('m-code'),name:n,category:gv('m-cat'),unit:gv('m-unit'),rate:+gv('m-rate')||0});
+  DB.set('materials',list);closeModal('material');renderMaterials();
+}
+function saveEmployee(){
+  const n=gv('e-name');if(!n)return alert('Name required');
+  const list=DB.get('employees'),id=EID.employee||uid();
+  upsert(list,id,{id,code:gv('e-code'),name:n,dsg:gv('e-designation'),mobile:gv('e-mobile'),role:gv('e-role'),project:gv('e-project'),salary:+gv('e-salary')||0});
+  DB.set('employees',list);closeModal('employee');renderEmployees();
+}
+function saveContract(){
+  const p=gv('ct-proj');if(!p)return alert('Project required');
+  const list=DB.get('contracts'),id=EID.contract||uid();
+  upsert(list,id,{id,no:gv('ct-no'),date:gv('ct-date'),project:p,client:gv('ct-client'),value:+gv('ct-value')||0,status:gv('ct-status'),ret:+gv('ct-ret')||5,adv:+gv('ct-adv')||10,scope:gv('ct-scope'),terms:gv('ct-terms')});
+  DB.set('contracts',list);closeModal('contract');renderContracts();log('Contract '+gv('ct-no')+' saved');
+}
+function saveWO(){
+  const p=gv('wo-proj');if(!p)return alert('Project required');
+  const list=DB.get('workorders'),id=EID.wo||uid();
+  upsert(list,id,{id,no:gv('wo-no'),date:gv('wo-date'),project:p,vendor:gv('wo-vendor'),value:+gv('wo-value')||0,ret:+gv('wo-ret')||5,start:gv('wo-start'),end:gv('wo-end'),status:gv('wo-status'),pay:gv('wo-pay'),scope:gv('wo-scope')});
+  DB.set('workorders',list);closeModal('wo');renderWOs();log('WO '+gv('wo-no')+' saved');
+}
+function saveBOQ(){
+  const desc=gv('b-desc');if(!desc)return alert('Description required');
+  const list=DB.get('boqs'),id=EID.boq||uid();
+  const qty=+gv('b-qty')||0,rate=+gv('b-rate')||0;
+  upsert(list,id,{id,no:gv('b-no'),project:gv('b-proj'),desc,unit:gv('b-unit'),qty,rate,amt:qty*rate});
+  DB.set('boqs',list);closeModal('boq');renderBOQ();log('BOQ "'+desc+'" saved');
+}
+function saveRate(){
+  const n=gv('r-name');if(!n)return alert('Name required');
+  const list=DB.get('rates'),id=EID.rate||uid();
+  const mat=+gv('r-mat')||0,lab=+gv('r-lab')||0,mac=+gv('r-mac')||0,oh=+gv('r-oh')||0;
+  upsert(list,id,{id,code:gv('r-code'),name:n,unit:gv('r-unit'),mat,lab,mac,oh,total:Math.round((mat+lab+mac)*(1+oh/100))});
+  DB.set('rates',list);closeModal('rate');renderRates();
+}
+function savePO(){
+  const no=gv('po-no');if(!no)return alert('PO number required');
+  const list=DB.get('purchases'),id=EID.po||uid();
+  upsert(list,id,{id,no,date:gv('po-date'),vendor:gv('po-vendor'),project:gv('po-proj'),amt:+gv('po-amt')||0,status:gv('po-status'),items:gv('po-items'),terms:gv('po-terms')});
+  DB.set('purchases',list);closeModal('po');renderPurchase();log('PO "'+no+'" saved');
+}
+function saveExpense(){
+  const amt=+gv('ex-amt');if(!amt)return alert('Amount required');
+  const list=DB.get('expenses'),id=EID.expense||uid();
+  upsert(list,id,{id,date:gv('ex-date'),project:gv('ex-proj'),category:gv('ex-cat'),amt,desc:gv('ex-desc'),paid:gv('ex-paid')});
+  DB.set('expenses',list);closeModal('expense');renderExpenses();renderDash();log('Expense '+fmt(amt)+' added');
+}
+function saveBill(){
+  const no=gv('bi-no');if(!no)return alert('Bill number required');
+  const list=DB.get('bills'),id=EID.bill||uid();
+  upsert(list,id,{id,no,date:gv('bi-date'),project:gv('bi-proj'),client:gv('bi-client'),gross:+gv('bi-gross')||0,ret:+gv('bi-ret')||0,gst:+gv('bi-gst')||0,net:+gv('bi-net')||0,status:gv('bi-status'),remarks:gv('bi-remarks')});
+  DB.set('bills',list);closeModal('bill');renderBilling();renderDash();log('Bill "'+no+'" '+fmt(+gv('bi-net')||0)+' raised');
+}
+function saveReceipt(){
+  const amt=+gv('rc-amt');if(!amt)return alert('Amount required');
+  const list=DB.get('receipts'),id=EID.receipt||uid();
+  upsert(list,id,{id,date:gv('rc-date'),project:gv('rc-proj'),client:gv('rc-client'),ref:gv('rc-ref'),amt,mode:gv('rc-mode'),txn:gv('rc-txn')});
+  DB.set('receipts',list);closeModal('receipt');renderReceipts();renderDash();log('Receipt '+fmt(amt)+' added');
+}
+
+// ===== DELETE =====
+// ===== PASSWORD-PROTECTED DELETE WITH ARCHIVE =====
+let _delPending={type:null,id:null};
+const DEL_PWD='Rajveer@5210';
+
+function del(type,id){
+  _delPending={type,id};
+  document.getElementById('pw-input').value='';
+  document.getElementById('pw-error').style.display='none';
+  document.getElementById('mo-pwdel').classList.add('open');
+}
+function closePwDel(){
+  document.getElementById('mo-pwdel').classList.remove('open');
+  _delPending={type:null,id:null};
+}
+function confirmDel(){
+  const pwd=document.getElementById('pw-input').value;
+  if(pwd!==DEL_PWD){
+    document.getElementById('pw-error').style.display='block';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+    return;
+  }
+  const {type,id}=_delPending;
+  if(!type||!id){closePwDel();return;}
+  const key={po:'purchases',wo:'workorders',contract:'contracts'}[type]||(type+'s');
+  const list=DB.get(key);
+  const record=list.find(x=>x.id===id);
+  if(record){
+    // Archive the record
+    const archive=DB.get('archive');
+    archive.push({
+      ...record,
+      _archType:type,
+      _archKey:key,
+      _archDate:new Date().toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}),
+      _archBy:'Admin',
+      _archName: record.name||record.no||record.desc||record.no||id
+    });
+    DB.set('archive',archive);
+    DB.set(key,list.filter(x=>x.id!==id));
+  }
+  closePwDel();
+  const R={client:()=>{renderClients();renderDash()},project:()=>{renderProjects();renderDash()},vendor:renderVendors,material:renderMaterials,employee:renderEmployees,contract:renderContracts,wo:renderWOs,boq:renderBOQ,rate:renderRates,po:renderPurchase,expense:()=>{renderExpenses();renderDash()},bill:()=>{renderBilling();renderDash()},receipt:()=>{renderReceipts();renderDash()}};
+  if(R[type])R[type]();
+  log(`Archived: ${type} "${record?._archName||id}"`);
+}
+
+// ===== LOOKUPS =====
+function getPName(id){return(DB.get('projects').find(x=>x.id===id)||{}).name||id||'—';}
+function getCName(id){return(DB.get('clients').find(x=>x.id===id)||{}).name||id||'—';}
+function getVName(id){return(DB.get('vendors').find(x=>x.id===id)||{}).name||id||'—';}
+function sbadge(s){const m={Running:'ok',Completed:'in',Planning:'wn',Hold:'er',Pending:'wn',Delivered:'ok',Partial:'pu',Cancelled:'er',Submitted:'gy',Approved:'in',Paid:'ok',Active:'ok',Draft:'wn',Terminated:'er'};return`<span class="bge bg-${m[s]||'gy'}">${s}</span>`;}
+
+// ===== RENDERS =====
+function renderClients(q=''){
+  const list=DB.get('clients').filter(c=>!q||c.name.toLowerCase().includes(q.toLowerCase()));
+  const ps=DB.get('projects');
+  document.getElementById('tb-clients').innerHTML=list.length?list.map((c,i)=>`<tr><td>${i+1}</td><td><strong>${c.name}</strong></td><td>${c.contact||'—'}</td><td>${c.mobile||'—'}</td><td>${c.gst||'—'}</td><td>${ps.filter(p=>p.client===c.id).length||'—'}</td><td><div class="ab"><button class="btn bw" onclick="openModal('client','${c.id}')">✏ Edit</button><button class="btn bd" onclick="del('client','${c.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="7">No clients yet. Add your first client →</td></tr>';
+}
+function renderProjects(){
+  const f=document.getElementById('proj-filter')?.value;
+  let list=DB.get('projects');if(f)list=list.filter(p=>p.status===f);
+  const cl=DB.get('clients');
+  document.getElementById('tb-projects').innerHTML=list.length?list.map(p=>{
+    const c=cl.find(x=>x.id===p.client);
+    return`<tr><td><code>${p.code||'—'}</code></td><td><strong>${p.name}</strong><br><small style="color:var(--tm)">${p.location||''}</small></td><td>${c?c.name:'—'}</td><td class="fw">${fmt(p.value)}</td><td style="font-size:11px">${p.start||'—'}<br>${p.end||'—'}</td><td>${sbadge(p.status)}</td><td><div class="pb"><div class="pf" style="width:${p.progress||0}%"></div></div><small style="color:var(--tm)">${p.progress||0}%</small></td><td><div class="ab"><button class="btn bw" onclick="openModal('project','${p.id}')">✏</button><button class="btn bd" onclick="del('project','${p.id}')">✕</button></div></td></tr>`;
+  }).join(''):'<tr class="er-row"><td colspan="8">No projects yet</td></tr>';
+}
+function renderVendors(){
+  const list=DB.get('vendors');
+  document.getElementById('tb-vendors').innerHTML=list.length?list.map((v,i)=>`<tr><td>${i+1}</td><td><strong>${v.name}</strong></td><td>${v.contact||'—'}</td><td>${v.mobile||'—'}</td><td>${v.gst||'—'}</td><td><span class="bge bg-gy">${v.category}</span></td><td><div class="ab"><button class="btn bw" onclick="openModal('vendor','${v.id}')">✏</button><button class="btn bd" onclick="del('vendor','${v.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="7">No vendors yet</td></tr>';
+}
+function renderMaterials(){
+  const list=DB.get('materials');
+  document.getElementById('tb-materials').innerHTML=list.length?list.map(m=>`<tr><td><code>${m.code||'—'}</code></td><td><strong>${m.name}</strong></td><td><span class="bge bg-gy">${m.category}</span></td><td>${m.unit}</td><td class="fw">${fmt(m.rate)}</td><td><div class="ab"><button class="btn bw" onclick="openModal('material','${m.id}')">✏</button><button class="btn bd" onclick="del('material','${m.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="6">No materials yet</td></tr>';
+}
+function renderEmployees(){
+  const list=DB.get('employees');
+  document.getElementById('tb-employees').innerHTML=list.length?list.map(e=>`<tr><td><code>${e.code||'—'}</code></td><td><strong>${e.name}</strong></td><td>${e.dsg||'—'}</td><td><span class="bge bg-in">${e.role}</span></td><td>${getPName(e.project)}</td><td>${fmt(e.salary)}</td><td><div class="ab"><button class="btn bw" onclick="openModal('employee','${e.id}')">✏</button><button class="btn bd" onclick="del('employee','${e.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="7">No employees yet</td></tr>';
+}
+function renderContracts(){
+  const list=DB.get('contracts');
+  document.getElementById('tb-contracts').innerHTML=list.length?list.map(c=>`<tr><td><code>${c.no}</code></td><td>${getPName(c.project)}</td><td>${c.client||'—'}</td><td class="fw">${fmt(c.value)}</td><td>${c.date||'—'}</td><td>${sbadge(c.status)}</td><td><div class="ab"><button class="btn bpdf" onclick="pdfDoc('contract','${c.id}')">📄 PDF</button><button class="btn bprint" onclick="pdfDoc('contract','${c.id}',true)">🖨 Print</button><button class="btn bw" onclick="openModal('contract','${c.id}')">✏</button><button class="btn bd" onclick="del('contract','${c.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="7">No contracts yet</td></tr>';
+}
+function renderWOs(){
+  const list=DB.get('workorders');
+  document.getElementById('tb-wo').innerHTML=list.length?list.map(w=>`<tr><td><code>${w.no}</code></td><td>${getPName(w.project)}</td><td>${getVName(w.vendor)}</td><td class="fw">${fmt(w.value)}</td><td>${w.date||'—'}</td><td>${sbadge(w.status)}</td><td><div class="ab"><button class="btn bpdf" onclick="pdfDoc('wo','${w.id}')">📄 PDF</button><button class="btn bprint" onclick="pdfDoc('wo','${w.id}',true)">🖨 Print</button><button class="btn bw" onclick="openModal('wo','${w.id}')">✏</button><button class="btn bd" onclick="del('wo','${w.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="7">No work orders yet</td></tr>';
+}
+function renderBOQ(){
+  const f=document.getElementById('boq-filter')?.value;
+  let list=DB.get('boqs');if(f)list=list.filter(b=>b.project===f);
+  document.getElementById('tb-boq').innerHTML=list.length?list.map(b=>`<tr><td>${b.no||'—'}</td><td>${getPName(b.project)}</td><td>${b.desc}</td><td>${b.unit}</td><td class="tr2">${fmtN(b.qty)}</td><td class="tr2">${fmt(b.rate)}</td><td class="tr2 fw">${fmt(b.amt)}</td><td><div class="ab"><button class="btn bw" onclick="openModal('boq','${b.id}')">✏</button><button class="btn bd" onclick="del('boq','${b.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="8">No BOQ items yet</td></tr>';
+  document.getElementById('boq-total').textContent=fmt(list.reduce((s,b)=>s+(+b.amt||0),0));
+}
+function renderRates(){
+  const list=DB.get('rates');
+  document.getElementById('tb-rates').innerHTML=list.length?list.map(r=>`<tr><td><code>${r.code||'—'}</code></td><td><strong>${r.name}</strong></td><td>${r.unit}</td><td class="tr2">${fmt(r.mat)}</td><td class="tr2">${fmt(r.lab)}</td><td class="tr2">${fmt(r.mac)}</td><td class="tr2">${r.oh||0}%</td><td class="tr2 fw" style="color:var(--ok)">${fmt(r.total)}</td><td><div class="ab"><button class="btn bw" onclick="openModal('rate','${r.id}')">✏</button><button class="btn bd" onclick="del('rate','${r.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="9">No rates yet</td></tr>';
+}
+function renderPurchase(){
+  const list=DB.get('purchases');
+  document.getElementById('tb-purchase').innerHTML=list.length?list.map(p=>`<tr><td><code>${p.no}</code></td><td>${getVName(p.vendor)}</td><td>${getPName(p.project)}</td><td>${p.date||'—'}</td><td class="fw">${fmt(p.amt)}</td><td>${sbadge(p.status)}</td><td><div class="ab"><button class="btn bpdf" onclick="pdfDoc('po','${p.id}')">📄 PDF</button><button class="btn bprint" onclick="pdfDoc('po','${p.id}',true)">🖨 Print</button><button class="btn bw" onclick="openModal('po','${p.id}')">✏</button><button class="btn bd" onclick="del('po','${p.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="7">No POs yet</td></tr>';
+}
+function renderExpenses(){
+  const list=DB.get('expenses');
+  document.getElementById('tb-expenses').innerHTML=list.length?list.map(e=>`<tr><td>${e.date||'—'}</td><td>${getPName(e.project)}</td><td><span class="bge bg-gy">${e.category}</span></td><td>${e.desc||'—'}</td><td class="fw" style="color:var(--er)">${fmt(e.amt)}</td><td>${e.paid||'—'}</td><td><div class="ab"><button class="btn bw" onclick="openModal('expense','${e.id}')">✏</button><button class="btn bd" onclick="del('expense','${e.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="7">No expenses yet</td></tr>';
+  document.getElementById('exp-total').textContent=fmt(list.reduce((s,e)=>s+(+e.amt||0),0));
+}
+function renderBilling(){
+  const list=DB.get('bills');
+  document.getElementById('tb-billing').innerHTML=list.length?list.map(b=>`<tr><td><code>${b.no}</code></td><td>${getPName(b.project)}</td><td>${b.client||'—'}</td><td>${b.date||'—'}</td><td>${fmt(b.gross)}</td><td>${b.ret||0}%</td><td>${b.gst||0}%</td><td class="fw" style="color:var(--ok)">${fmt(b.net)}</td><td>${sbadge(b.status)}</td><td><div class="ab"><button class="btn bpdf" onclick="pdfDoc('bill','${b.id}')">📄 PDF</button><button class="btn bprint" onclick="pdfDoc('bill','${b.id}',true)">🖨 Print</button><button class="btn bw" onclick="openModal('bill','${b.id}')">✏</button><button class="btn bd" onclick="del('bill','${b.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="10">No bills yet</td></tr>';
+  document.getElementById('bill-total').textContent=fmt(list.reduce((s,b)=>s+(+b.net||0),0));
+}
+function renderReceipts(){
+  const list=DB.get('receipts');
+  document.getElementById('tb-receipts').innerHTML=list.length?list.map(r=>`<tr><td>${r.date||'—'}</td><td>${getPName(r.project)}</td><td>${r.client||'—'}</td><td>${r.ref||'—'}</td><td class="fw" style="color:var(--ok)">${fmt(r.amt)}</td><td><span class="bge bg-in">${r.mode}</span></td><td>${r.txn||'—'}</td><td><div class="ab"><button class="btn bw" onclick="openModal('receipt','${r.id}')">✏</button><button class="btn bd" onclick="del('receipt','${r.id}')">✕</button></div></td></tr>`).join(''):'<tr class="er-row"><td colspan="8">No receipts yet</td></tr>';
+  document.getElementById('rec-total').textContent=fmt(list.reduce((s,r)=>s+(+r.amt||0),0));
+}
+function renderPnL(){
+  popProj();
+  const sid=document.getElementById('pnl-filter')?.value;
+  const projects=DB.get('projects'),bills=DB.get('bills'),receipts=DB.get('receipts'),expenses=DB.get('expenses'),purchases=DB.get('purchases');
+  const calc=pid=>{
+    const billed=bills.filter(b=>!pid||b.project===pid).reduce((s,b)=>s+(+b.net||0),0);
+    const recv=receipts.filter(r=>!pid||r.project===pid).reduce((s,r)=>s+(+r.amt||0),0);
+    const expC=expenses.filter(e=>!pid||e.project===pid).reduce((s,e)=>s+(+e.amt||0),0);
+    const poC=purchases.filter(p=>!pid||p.project===pid).reduce((s,p)=>s+(+p.amt||0),0);
+    const cost=expC+poC,gp=billed-cost;
+    const cv=pid?(projects.find(p=>p.id===pid)?.value||0):projects.reduce((s,p)=>s+(+p.value||0),0);
+    return{billed,recv,expC,poC,cost,gp,pct:billed>0?(gp/billed*100).toFixed(1):0,cv,out:billed-recv};
+  };
+  const el=document.getElementById('pnl-content');
+  if(sid){
+    const proj=projects.find(p=>p.id===sid),d=calc(sid);
+    el.innerHTML=`<div class="sg">
+      <div class="sc bl"><div class="sl">Contract Value</div><div class="sv" style="font-size:18px">${fmt(d.cv)}</div></div>
+      <div class="sc"><div class="sl">Billed</div><div class="sv" style="font-size:18px">${fmt(d.billed)}</div></div>
+      <div class="sc gr"><div class="sl">Received</div><div class="sv" style="font-size:18px">${fmt(d.recv)}</div></div>
+      <div class="sc re"><div class="sl">Outstanding</div><div class="sv" style="font-size:18px">${fmt(d.out)}</div></div>
+    </div>
+    <div class="tc"><div class="th"><div class="tt">P&L — ${proj?.name||''}</div></div>
+    <table class="pl-table"><thead><tr><th>Particular</th><th class="tr2">Amount (₹)</th></tr></thead><tbody>
+      <tr class="tr"><td>Contract Value</td><td class="tr2">${fmt(d.cv)}</td></tr>
+      <tr><td>Work Billed (RA Bills)</td><td class="tr2">${fmt(d.billed)}</td></tr>
+      <tr><td style="color:var(--er)">— Purchase / Material Cost</td><td class="tr2" style="color:var(--er)">(${fmt(d.poC)})</td></tr>
+      <tr><td style="color:var(--er)">— Site Expenses</td><td class="tr2" style="color:var(--er)">(${fmt(d.expC)})</td></tr>
+      <tr class="tr"><td>Total Cost</td><td class="tr2" style="color:var(--er)">(${fmt(d.cost)})</td></tr>
+      <tr class="${d.gp>=0?'pr':'lr'}"><td>${d.gp>=0?'✅ Gross Profit':'❌ Net Loss'}</td><td class="tr2">${fmt(Math.abs(d.gp))}</td></tr>
+      <tr><td>Profit Margin</td><td class="tr2 fw">${d.pct}%</td></tr>
+    </tbody></table></div>`;
+  }else{
+    const rows=projects.map(p=>{const d=calc(p.id);return{...d,name:p.name,status:p.status};});
+    const tot=calc('');
+    el.innerHTML=`<div class="sg">
+      <div class="sc bl"><div class="sl">Total Contract</div><div class="sv" style="font-size:18px">${fmt(tot.cv)}</div></div>
+      <div class="sc"><div class="sl">Total Billed</div><div class="sv" style="font-size:18px">${fmt(tot.billed)}</div></div>
+      <div class="sc gr"><div class="sl">Received</div><div class="sv" style="font-size:18px">${fmt(tot.recv)}</div></div>
+      <div class="sc ${tot.gp>=0?'gr':'re'}"><div class="sl">${tot.gp>=0?'Net Profit':'Net Loss'}</div><div class="sv" style="font-size:18px;color:var(--${tot.gp>=0?'ok':'er'})">${fmt(Math.abs(tot.gp))}</div></div>
+    </div>
+    ${rows.length?`<div class="tc mt"><div class="th"><div class="tt">Project-wise P&L</div></div>
+    <table class="pl-table"><thead><tr><th>Project</th><th>Status</th><th class="tr2">Contract</th><th class="tr2">Billed</th><th class="tr2">Cost</th><th class="tr2">Profit/Loss</th><th class="tr2">Margin</th></tr></thead><tbody>
+    ${rows.map(r=>`<tr><td><strong>${r.name}</strong></td><td>${sbadge(r.status)}</td><td class="tr2">${fmt(r.cv)}</td><td class="tr2">${fmt(r.billed)}</td><td class="tr2" style="color:var(--er)">${fmt(r.cost)}</td><td class="tr2 ${r.gp>=0?'':''}"><span style="color:var(--${r.gp>=0?'ok':'er'})">${fmt(r.gp)}</span></td><td class="tr2">${r.pct}%</td></tr>`).join('')}
+    </tbody><tfoot><tr style="background:var(--su2);font-weight:700"><td colspan="2">TOTAL</td><td class="tr2">${fmt(tot.cv)}</td><td class="tr2">${fmt(tot.billed)}</td><td class="tr2" style="color:var(--er)">${fmt(tot.cost)}</td><td class="tr2" style="color:var(--${tot.gp>=0?'ok':'er'})">${fmt(tot.gp)}</td><td class="tr2">${tot.pct}%</td></tr></tfoot></table></div>`:'<div style="text-align:center;padding:40px;color:var(--tm)">Add projects, bills and expenses to see report.</div>'}`;
+  }
+}
+
+// ===== DASHBOARD =====
+function renderDash(){
+  const ps=DB.get('projects'),cl=DB.get('clients'),ex=DB.get('expenses'),bi=DB.get('bills'),rc=DB.get('receipts'),po=DB.get('purchases');
+  const tb=bi.reduce((s,b)=>s+(+b.net||0),0),rv=rc.reduce((s,r)=>s+(+r.amt||0),0);
+  const tc=(ex.reduce((s,e)=>s+(+e.amt||0),0))+(po.reduce((s,p)=>s+(+p.amt||0),0));
+  const run=ps.filter(p=>p.status==='Running').length,pnl=tb-tc;
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="sc bl"><div class="sl">Projects</div><div class="sv">${ps.length}</div><div class="ss">${run} running</div></div>
+    <div class="sc"><div class="sl">Clients</div><div class="sv">${cl.length}</div></div>
+    <div class="sc gr"><div class="sl">Total Billed</div><div class="sv" style="font-size:17px">${fmt(tb)}</div><div class="ss">Collected ${fmt(rv)}</div></div>
+    <div class="sc re"><div class="sl">Outstanding</div><div class="sv" style="font-size:17px">${fmt(tb-rv)}</div></div>
+    <div class="sc pu"><div class="sl">Total Cost</div><div class="sv" style="font-size:17px">${fmt(tc)}</div></div>
+    <div class="sc ${pnl>=0?'gr':'re'}"><div class="sl">Gross P&L</div><div class="sv" style="font-size:17px;color:var(--${pnl>=0?'ok':'er'})">${fmt(pnl)}</div></div>`;
+  const sg={};ps.forEach(p=>sg[p.status]=(sg[p.status]||0)+1);
+  const ms=Math.max(...Object.values(sg),1);
+  document.getElementById('ch-status').innerHTML=Object.entries(sg).map(([s,n])=>`<div class="br2"><div class="bl2">${s}</div><div class="bt"><div class="bf" style="width:${n/ms*100}%;background:${s==='Running'?'var(--ok)':s==='Completed'?'var(--in)':s==='Hold'?'var(--er)':'var(--wn)'}"></div></div><div class="bv2">${n} proj</div></div>`).join('')||'<div style="color:var(--tm);font-size:12px">No projects</div>';
+  const tp=[...ps].sort((a,b)=>(+b.value||0)-(+a.value||0)).slice(0,5);
+  const mv=Math.max(...tp.map(p=>+p.value||0),1);
+  document.getElementById('ch-projects').innerHTML=tp.map(p=>`<div class="br2"><div class="bl2" title="${p.name}">${p.name.slice(0,12)}${p.name.length>12?'...':''}</div><div class="bt"><div class="bf" style="width:${(+p.value||0)/mv*100}%"></div></div><div class="bv2">${fmt(p.value)}</div></div>`).join('')||'<div style="color:var(--tm);font-size:12px">No projects</div>';
+  const ec={};ex.forEach(e=>ec[e.category]=(ec[e.category]||0)+(+e.amt||0));
+  const me=Math.max(...Object.values(ec),1);
+  document.getElementById('ch-expenses').innerHTML=Object.entries(ec).map(([k,v])=>`<div class="br2"><div class="bl2">${k.slice(0,12)}</div><div class="bt"><div class="bf" style="width:${v/me*100}%;background:var(--wn)"></div></div><div class="bv2">${fmt(v)}</div></div>`).join('')||'<div style="color:var(--tm);font-size:12px">No expenses</div>';
+  const acts=getLogs().slice(-5).reverse();
+  document.getElementById('ch-activity').innerHTML=acts.length?acts.map(a=>`<div style="padding:4px 0;border-bottom:1px solid var(--br);font-size:12px"><span style="font-size:10px;color:var(--tm)">${a.t}</span><br>${a.m}</div>`).join(''):'<div style="color:var(--tm);font-size:12px">No activity yet</div>';
+}
+
+// ===== ACTIVITY LOG =====
+function log(m){const l=getLogs();l.push({m,t:new Date().toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})});localStorage.setItem('adi_log',JSON.stringify(l.slice(-50)));}
+function getLogs(){return JSON.parse(localStorage.getItem('adi_log')||'[]');}
+
+// ===== CALC HELPERS =====
+function calcBOQ(){const q=+document.getElementById('b-qty')?.value||0,r=+document.getElementById('b-rate')?.value||0;const e=document.getElementById('b-amt');if(e)e.value=Math.round(q*r);}
+function calcRate(){const m=+document.getElementById('r-mat')?.value||0,l=+document.getElementById('r-lab')?.value||0,mc=+document.getElementById('r-mac')?.value||0,oh=+document.getElementById('r-oh')?.value||0;const e=document.getElementById('r-total');if(e)e.value=Math.round((m+l+mc)*(1+oh/100));}
+function calcBill(){const g=+document.getElementById('bi-gross')?.value||0,r=+document.getElementById('bi-ret')?.value||0,gst=+document.getElementById('bi-gst')?.value||0;const e=document.getElementById('bi-net');if(e)e.value=Math.round(g*(1-r/100)*(1+gst/100));}
+function fillBillClient(){const pid=document.getElementById('bi-proj')?.value;const p=DB.get('projects').find(x=>x.id===pid);const c=p?DB.get('clients').find(x=>x.id===p.client):null;const e=document.getElementById('bi-client');if(e)e.value=c?c.name:'';}
+function fillCtClient(){const pid=document.getElementById('ct-proj')?.value;const p=DB.get('projects').find(x=>x.id===pid);const c=p?DB.get('clients').find(x=>x.id===p.client):null;const e=document.getElementById('ct-client');if(e)e.value=c?c.name:p?.name||'';}
+
+// ===== PDF ENGINE =====
+const CO='ADI Construction';
+const ADDR='Construction ERP | India | info@adiconstruction.com';
+
+function mkPDF(title){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  doc.setFillColor(15,76,129);doc.rect(0,0,210,26,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(15);doc.setFont('helvetica','bold');doc.text(CO,13,11);
+  doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.text(ADDR,13,17);
+  doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text(title,197,18,{align:'right'});
+  doc.setTextColor(30,41,59);
+  return doc;
+}
+function addFooters(doc){
+  const n=doc.internal.getNumberOfPages();
+  for(let i=1;i<=n;i++){
+    doc.setPage(i);
+    doc.setFillColor(15,76,129);doc.rect(0,285,210,12,'F');
+    doc.setFontSize(7.5);doc.setTextColor(255,255,255);
+    doc.text(CO+' | Confidential',13,292);
+    doc.text('Page '+i+' of '+n+' | '+new Date().toLocaleDateString('en-IN'),197,292,{align:'right'});
+    doc.setTextColor(30,41,59);
+  }
+}
+function mbox(doc,x,y,w,label,val){
+  doc.setFillColor(248,250,252);doc.roundedRect(x,y,w,13,1.5,1.5,'F');
+  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(100,116,139);doc.text(label.toUpperCase(),x+2.5,y+4.5);
+  doc.setFontSize(9.5);doc.setFont('helvetica','bold');doc.setTextColor(30,41,59);doc.text(String(val||'—').slice(0,26),x+2.5,y+10.5);
+}
+function noBox(doc,x,y,no,label){
+  doc.setFillColor(245,158,11);doc.roundedRect(x,y,60,15,2,2,'F');
+  doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(0,0,0);doc.text(label,x+2.5,y+5.5);
+  doc.setFontSize(13);doc.text(String(no),x+2.5,y+13);
+}
+
+function pdfDoc(type,id,print=false){
+  if(type==='bill')pdfBill(id,print);
+  else if(type==='po')pdfPO(id,print);
+  else if(type==='wo')pdfWO(id,print);
+  else if(type==='contract')pdfContract(id,print);
+}
+
+function pdfBill(id,print){
+  const b=DB.get('bills').find(x=>x.id===id);if(!b)return;
+  const p=DB.get('projects').find(x=>x.id===b.project)||{};
+  const doc=mkPDF('TAX INVOICE / RA BILL');
+  noBox(doc,136,30,b.no,'BILL NO.');
+  let y=49;
+  mbox(doc,13,y,95,'Project',p.name);mbox(doc,112,y,85,'Client',b.client);y+=17;
+  mbox(doc,13,y,46,'Bill Date',b.date);mbox(doc,63,y,46,'Status',b.status);mbox(doc,113,y,46,'Project Code',p.code||'—');y+=17;
+  doc.autoTable({startY:y,head:[['Particular','Amount (₹)']],
+    body:[['Gross Bill Amount',fmtN(b.gross)],['Less: Retention ('+b.ret+'%)', '('+fmtN(Math.round(b.gross*(b.ret||0)/100))+')'],['Amount after Retention',fmtN(Math.round(b.gross*(1-(b.ret||0)/100)))],['Add: GST ('+b.gst+'%)',fmtN(Math.round(b.gross*(1-(b.ret||0)/100)*(b.gst||0)/100))],['NET PAYABLE AMOUNT',fmtN(b.net)]],
+    styles:{fontSize:10.5},headStyles:{fillColor:[15,76,129],fontStyle:'bold'},
+    columnStyles:{1:{halign:'right'}},
+    didParseCell:d=>{if(d.row.index===4){d.cell.styles.fontStyle='bold';d.cell.styles.fillColor=[240,244,248];}},theme:'grid'});
+  let y2=doc.lastAutoTable.finalY+10;
+  if(b.remarks){doc.setFontSize(8.5);doc.setFont('helvetica','italic');doc.setTextColor(100,116,139);doc.text('Remarks: '+b.remarks,13,y2);y2+=8;}
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(100,116,139);
+  doc.line(13,y2+14,65,y2+14);doc.line(130,y2+14,195,y2+14);
+  doc.text('For '+CO,13,y2+18);doc.text('Received By (Client)',130,y2+18);
+  addFooters(doc);
+  if(print){window.open(doc.output('bloburl'),'_blank');}else{doc.save('Bill_'+b.no+'.pdf');}
+}
+
+function pdfPO(id,print){
+  const po=DB.get('purchases').find(x=>x.id===id);if(!po)return;
+  const v=DB.get('vendors').find(x=>x.id===po.vendor)||{};
+  const p=DB.get('projects').find(x=>x.id===po.project)||{};
+  const doc=mkPDF('PURCHASE ORDER');
+  noBox(doc,136,30,po.no,'PO NUMBER');
+  let y=49;
+  mbox(doc,13,y,95,'Vendor / Supplier',v.name||po.vendor||'—');mbox(doc,112,y,85,'GST No.',v.gst||'—');y+=17;
+  mbox(doc,13,y,56,'PO Date',po.date);mbox(doc,73,y,66,'Project',p.name||'—');mbox(doc,143,y,54,'Status',po.status);y+=17;
+  mbox(doc,13,y,65,'Total PO Value',fmt(po.amt));mbox(doc,82,y,115,'Delivery Terms',po.terms||'As agreed');y+=17;
+  doc.autoTable({startY:y,head:[['Items / Materials Ordered']],
+    body:[[po.items||'As per specification and attached list']],
+    styles:{fontSize:10},headStyles:{fillColor:[15,76,129]},bodyStyles:{cellPadding:5},theme:'grid'});
+  y=doc.lastAutoTable.finalY+10;
+  doc.autoTable({startY:y,head:[['Standard PO Terms']],
+    body:[['1. Material to be supplied as per IS specifications.'],['2. Delivery at site, any damage during transit is supplier\'s responsibility.'],['3. Invoice to be raised after delivery and inspection.'],['4. Payment: '+( po.terms||'As agreed')],['5. Any discrepancy in quantity/quality must be notified within 48 hours.']],
+    styles:{fontSize:9},headStyles:{fillColor:[15,76,129]},bodyStyles:{cellPadding:3},theme:'grid'});
+  y=doc.lastAutoTable.finalY+12;
+  doc.setFontSize(9);doc.setTextColor(100,116,139);
+  doc.line(13,y+14,70,y+14);doc.line(130,y+14,195,y+14);
+  doc.text('For '+CO+' (Authorized)',13,y+18);doc.text('Vendor Acceptance & Stamp',130,y+18);
+  addFooters(doc);
+  if(print){window.open(doc.output('bloburl'),'_blank');}else{doc.save('PO_'+po.no+'.pdf');}
+}
+
+function pdfWO(id,print){
+  const wo=DB.get('workorders').find(x=>x.id===id);if(!wo)return;
+  const v=DB.get('vendors').find(x=>x.id===wo.vendor)||{};
+  const p=DB.get('projects').find(x=>x.id===wo.project)||{};
+  const doc=mkPDF('WORK ORDER');
+  noBox(doc,136,30,wo.no,'WO NUMBER');
+  let y=49;
+  mbox(doc,13,y,95,'Project',p.name||'—');mbox(doc,112,y,85,'Issued To',v.name||'—');y+=17;
+  mbox(doc,13,y,43,'WO Date',wo.date);mbox(doc,60,y,43,'Start',wo.start||'—');mbox(doc,107,y,43,'Completion',wo.end||'—');mbox(doc,154,y,43,'Status',wo.status);y+=17;
+  mbox(doc,13,y,60,'WO Value',fmt(wo.value));mbox(doc,77,y,40,'Retention',wo.ret+'%');mbox(doc,121,y,76,'Payment Terms',wo.pay||'As agreed');y+=17;
+  if(wo.scope){
+    doc.setFontSize(9.5);doc.setFont('helvetica','bold');doc.text('Scope of Work:',13,y);y+=5;
+    doc.setFont('helvetica','normal');doc.setFontSize(9);
+    const lines=doc.splitTextToSize(wo.scope,184);doc.text(lines,13,y);y+=lines.length*4.5+6;
+  }
+  doc.autoTable({startY:y,head:[['Terms & Conditions']],
+    body:[['1. Work to be executed strictly as per drawings, BOQ and specifications.'],['2. Retention '+wo.ret+'% deducted from each RA bill, released after defect liability period.'],['3. Payment: '+(wo.pay||'As per agreed schedule')],['4. Any extra work requires written approval before execution.'],['5. All safety norms, PPE requirements and site rules must be strictly followed.'],['6. Contractor is responsible for workmanship for 12 months after completion.']],
+    styles:{fontSize:9},headStyles:{fillColor:[15,76,129]},bodyStyles:{cellPadding:3},theme:'grid'});
+  y=doc.lastAutoTable.finalY+12;
+  doc.setFontSize(9);doc.setTextColor(100,116,139);
+  doc.line(13,y+14,70,y+14);doc.line(130,y+14,195,y+14);
+  doc.text('For '+CO,13,y+18);doc.text('Contractor Acceptance & Stamp',130,y+18);
+  addFooters(doc);
+  if(print){window.open(doc.output('bloburl'),'_blank');}else{doc.save('WO_'+wo.no+'.pdf');}
+}
+
+function pdfContract(id,print){
+  const ct=DB.get('contracts').find(x=>x.id===id);if(!ct)return;
+  const p=DB.get('projects').find(x=>x.id===ct.project)||{};
+  const doc=mkPDF('CONTRACT AGREEMENT');
+  noBox(doc,136,30,ct.no,'CONTRACT NO.');
+  let y=49;
+  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.text('THIS AGREEMENT is made between the following parties:',13,y);y+=8;
+  doc.setFillColor(240,244,248);doc.roundedRect(13,y,184,16,2,2,'F');
+  doc.setFontSize(8.5);doc.setFont('helvetica','bold');doc.setTextColor(15,76,129);doc.text('PARTY A — CONTRACTOR:',16,y+5.5);
+  doc.setFont('helvetica','normal');doc.setTextColor(30,41,59);doc.text(CO+' | '+ADDR,16,y+11.5);y+=20;
+  doc.setFillColor(240,244,248);doc.roundedRect(13,y,184,16,2,2,'F');
+  doc.setFontSize(8.5);doc.setFont('helvetica','bold');doc.setTextColor(15,76,129);doc.text('PARTY B — CLIENT:',16,y+5.5);
+  doc.setFont('helvetica','normal');doc.setTextColor(30,41,59);doc.text(ct.client||'—',16,y+11.5);y+=20;
+  mbox(doc,13,y,43,'Contract Date',ct.date);mbox(doc,60,y,57,'Contract Value',fmt(ct.value));mbox(doc,121,y,36,'Retention',ct.ret+'%');mbox(doc,161,y,36,'Advance',ct.adv+'%');y+=17;
+  mbox(doc,13,y,95,'Project',p.name||'—');mbox(doc,112,y,50,'Status',ct.status);y+=17;
+  if(ct.scope){
+    doc.setFontSize(9.5);doc.setFont('helvetica','bold');doc.text('Scope of Work:',13,y);y+=5;
+    doc.setFont('helvetica','normal');doc.setFontSize(9);
+    const lines=doc.splitTextToSize(ct.scope,184);doc.text(lines,13,y);y+=lines.length*4.5+5;
+  }
+  if(ct.terms){
+    doc.setFontSize(9.5);doc.setFont('helvetica','bold');doc.text('Special Terms & Conditions:',13,y);y+=5;
+    doc.setFont('helvetica','normal');doc.setFontSize(9);
+    const lines=doc.splitTextToSize(ct.terms,184);doc.text(lines,13,y);y+=lines.length*4.5+5;
+  }
+  doc.autoTable({startY:y,head:[['Standard Clauses']],
+    body:[['1. This agreement is valid from contract date until project completion and defect liability period.'],['2. Payment against RA bills as per agreed schedule. Retention '+ct.ret+'% released after DLP.'],['3. Advance of '+ct.adv+'% to be recovered equally from running bills.'],['4. Variations must be approved in writing by both parties before execution.'],['5. Any dispute shall first be resolved through mutual negotiation, then arbitration per Indian Arbitration Act.'],['6. All work must comply with applicable IS codes, BIS standards and local regulations.'],['7. Force majeure: Neither party liable for delays due to events beyond reasonable control.']],
+    styles:{fontSize:8.5},headStyles:{fillColor:[15,76,129]},bodyStyles:{cellPadding:3},theme:'grid'});
+  y=doc.lastAutoTable.finalY+14;
+  if(y>255){doc.addPage();y=20;}
+  doc.setFontSize(9);doc.setTextColor(100,116,139);
+  doc.line(13,y+16,75,y+16);doc.line(120,y+16,197,y+16);
+  doc.text('For '+CO+' (Contractor)',13,y+20);doc.text('For Client — '+ct.client,120,y+20);
+  doc.text('Signature & Company Stamp',13,y+25);doc.text('Signature & Company Stamp',120,y+25);
+  addFooters(doc);
+  if(print){window.open(doc.output('bloburl'),'_blank');}else{doc.save('Contract_'+ct.no+'.pdf');}
+}
+
+function exportBOQPDF(){
+  const f=document.getElementById('boq-filter')?.value;
+  let list=DB.get('boqs');if(f)list=list.filter(b=>b.project===f);
+  if(!list.length)return alert('No BOQ items to export');
+  const pn=f?getPName(f):'All Projects';
+  const doc=mkPDF('BILL OF QUANTITIES');
+  mbox(doc,13,30,110,'Project',pn);mbox(doc,127,30,70,'Date',new Date().toLocaleDateString('en-IN'));
+  const total=list.reduce((s,b)=>s+(+b.amt||0),0);
+  doc.autoTable({startY:46,head:[['#','Item No.','Description','Unit','Qty','Rate (₹)','Amount (₹)']],
+    body:list.map((b,i)=>[i+1,b.no||'—',b.desc,b.unit,fmtN(b.qty),fmtN(b.rate),fmtN(b.amt)]),
+    foot:[['','','','','','Total BOQ Value:',fmtN(total)]],
+    styles:{fontSize:9.5},headStyles:{fillColor:[15,76,129]},footStyles:{fillColor:[240,244,248],fontStyle:'bold'},
+    columnStyles:{4:{halign:'right'},5:{halign:'right'},6:{halign:'right',fontStyle:'bold'}},theme:'grid'});
+  addFooters(doc);doc.save('BOQ_'+pn.replace(/\s+/g,'_')+'.pdf');
+}
+
+function exportRatePDF(){
+  const list=DB.get('rates');if(!list.length)return alert('No rates to export');
+  const doc=mkPDF('RATE ANALYSIS LIBRARY');
+  doc.autoTable({startY:32,head:[['Code','Item Name','Unit','Material','Labour','Machinery','OH%','Total Rate']],
+    body:list.map(r=>[r.code||'—',r.name,r.unit,'₹'+fmtN(r.mat),'₹'+fmtN(r.lab),'₹'+fmtN(r.mac),r.oh+'%','₹'+fmtN(r.total)]),
+    styles:{fontSize:9},headStyles:{fillColor:[15,76,129]},columnStyles:{7:{halign:'right',fontStyle:'bold'}},theme:'grid'});
+  addFooters(doc);doc.save('Rate_Analysis.pdf');
+}
+
+function exportExpPDF(){
+  const list=DB.get('expenses');if(!list.length)return alert('No expenses to export');
+  const total=list.reduce((s,e)=>s+(+e.amt||0),0);
+  const doc=mkPDF('SITE EXPENSE REPORT');
+  doc.autoTable({startY:32,head:[['Date','Project','Category','Description','Amount (₹)','Paid To']],
+    body:list.map(e=>[e.date||'—',getPName(e.project),e.category,e.desc||'—',fmtN(e.amt),e.paid||'—']),
+    foot:[['','','','','Total: ₹'+fmtN(total),'']],
+    styles:{fontSize:9},headStyles:{fillColor:[15,76,129]},footStyles:{fillColor:[240,244,248],fontStyle:'bold'},
+    columnStyles:{4:{halign:'right',fontStyle:'bold'}},theme:'grid'});
+  addFooters(doc);doc.save('Expense_Report.pdf');
+}
+
+function exportRecPDF(){
+  const list=DB.get('receipts');if(!list.length)return alert('No receipts to export');
+  const total=list.reduce((s,r)=>s+(+r.amt||0),0);
+  const doc=mkPDF('COLLECTION / RECEIPT REPORT');
+  doc.autoTable({startY:32,head:[['Date','Project','Client','Bill Ref.','Amount (₹)','Mode','Txn No.']],
+    body:list.map(r=>[r.date||'—',getPName(r.project),r.client||'—',r.ref||'—',fmtN(r.amt),r.mode,r.txn||'—']),
+    foot:[['','','','','Total: ₹'+fmtN(total),'','']],
+    styles:{fontSize:9},headStyles:{fillColor:[15,76,129]},footStyles:{fillColor:[240,244,248],fontStyle:'bold'},
+    columnStyles:{4:{halign:'right',fontStyle:'bold'}},theme:'grid'});
+  addFooters(doc);doc.save('Receipts_Report.pdf');
+}
+
+function exportPnLPDF(){
+  const sid=document.getElementById('pnl-filter')?.value;
+  const projects=DB.get('projects'),bills=DB.get('bills'),receipts=DB.get('receipts'),expenses=DB.get('expenses'),purchases=DB.get('purchases');
+  const calc=pid=>{
+    const billed=bills.filter(b=>!pid||b.project===pid).reduce((s,b)=>s+(+b.net||0),0);
+    const recv=receipts.filter(r=>!pid||r.project===pid).reduce((s,r)=>s+(+r.amt||0),0);
+    const expC=expenses.filter(e=>!pid||e.project===pid).reduce((s,e)=>s+(+e.amt||0),0);
+    const poC=purchases.filter(p=>!pid||p.project===pid).reduce((s,p)=>s+(+p.amt||0),0);
+    const cost=expC+poC,gp=billed-cost;
+    const cv=pid?(projects.find(p=>p.id===pid)?.value||0):projects.reduce((s,p)=>s+(+p.value||0),0);
+    return{billed,recv,expC,poC,cost,gp,pct:billed>0?(gp/billed*100).toFixed(1):0,cv,out:billed-recv};
+  };
+  const doc=mkPDF('PROFIT & LOSS REPORT');
+  let y=32;
+  if(sid){
+    const proj=projects.find(p=>p.id===sid),d=calc(sid);
+    mbox(doc,13,y,110,'Project',proj?.name||'—');mbox(doc,127,y,70,'Report Date',new Date().toLocaleDateString('en-IN'));y+=17;
+    doc.autoTable({startY:y,head:[['Particular','Amount (₹)']],
+      body:[['Contract Value','₹'+fmtN(d.cv)],['Work Billed (RA Bills)','₹'+fmtN(d.billed)],['Less: Purchase / Material Cost','(₹'+fmtN(d.poC)+')'],['Less: Site Expenses','(₹'+fmtN(d.expC)+')'],['Total Cost','(₹'+fmtN(d.cost)+')'],[(d.gp>=0?'GROSS PROFIT':'NET LOSS'),'₹'+fmtN(Math.abs(d.gp))],['Profit Margin',d.pct+'%'],['Amount Received','₹'+fmtN(d.recv)],['Outstanding (Receivable)','₹'+fmtN(d.out)]],
+      styles:{fontSize:11},headStyles:{fillColor:[15,76,129]},columnStyles:{1:{halign:'right'}},
+      didParseCell:dt=>{if(dt.row.index===5){dt.cell.styles.fontStyle='bold';dt.cell.styles.fillColor=d.gp>=0?[209,250,229]:[254,226,226];}if(dt.row.index===4){dt.cell.styles.fillColor=[248,250,252];dt.cell.styles.fontStyle='bold';}},theme:'grid'});
+  }else{
+    const rows=projects.map(p=>{const d=calc(p.id);return[p.name,p.status,'₹'+fmtN(d.cv),'₹'+fmtN(d.billed),'₹'+fmtN(d.cost),'₹'+fmtN(d.gp),d.pct+'%'];});
+    const tot=calc('');
+    doc.autoTable({startY:y,head:[['Project','Status','Contract','Billed','Total Cost','Profit/Loss','Margin']],
+      body:rows,foot:[['TOTAL','','₹'+fmtN(tot.cv),'₹'+fmtN(tot.billed),'₹'+fmtN(tot.cost),'₹'+fmtN(tot.gp),tot.pct+'%']],
+      styles:{fontSize:9},headStyles:{fillColor:[15,76,129]},footStyles:{fillColor:[240,244,248],fontStyle:'bold'},
+      columnStyles:{2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right'}},theme:'grid'});
+  }
+  addFooters(doc);doc.save('PnL_Report_'+new Date().toISOString().split('T')[0]+'.pdf');
+}
+
+function exportAllPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const ps=DB.get('projects'),cl=DB.get('clients'),ex=DB.get('expenses'),bi=DB.get('bills'),rc=DB.get('receipts'),po=DB.get('purchases'),wo=DB.get('workorders'),ct=DB.get('contracts');
+  // Cover
+  doc.setFillColor(15,76,129);doc.rect(0,0,210,297,'F');
+  doc.setFillColor(245,158,11);doc.rect(0,240,210,57,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(30);doc.setFont('helvetica','bold');doc.text(CO,105,110,{align:'center'});
+  doc.setFontSize(14);doc.setFont('helvetica','normal');doc.text('COMPREHENSIVE ERP REPORT',105,128,{align:'center'});
+  doc.setFontSize(10);doc.text(new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'}),105,140,{align:'center'});
+  doc.setTextColor(0,0,0);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('CONFIDENTIAL',105,256,{align:'center'});
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text('This document contains proprietary business information.',105,264,{align:'center'});
+  // Summary page
+  doc.addPage();
+  doc.setFillColor(15,76,129);doc.rect(0,0,210,24,'F');
+  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);doc.text('EXECUTIVE SUMMARY',13,16);doc.setTextColor(30,41,59);
+  const tb=bi.reduce((s,b)=>s+(+b.net||0),0),rv=rc.reduce((s,r)=>s+(+r.amt||0),0);
+  const tc=(ex.reduce((s,e)=>s+(+e.amt||0),0))+(po.reduce((s,p)=>s+(+p.amt||0),0));
+  doc.autoTable({startY:30,head:[['Metric','Value']],body:[
+    ['Total Projects',ps.length],['Total Clients',cl.length],['Total Work Orders',wo.length],['Total Contracts',ct.length],
+    ['Total Contract Value','₹'+fmtN(ps.reduce((s,p)=>s+(+p.value||0),0))],
+    ['Total Billed','₹'+fmtN(tb)],['Total Received','₹'+fmtN(rv)],['Outstanding Receivable','₹'+fmtN(tb-rv)],
+    ['Total Cost (Exp+PO)','₹'+fmtN(tc)],['Net Profit / Loss','₹'+fmtN(tb-tc)],
+  ],styles:{fontSize:11},headStyles:{fillColor:[15,76,129]},columnStyles:{1:{halign:'right',fontStyle:'bold'}},theme:'grid'});
+  // Projects
+  if(ps.length){doc.addPage();doc.setFillColor(15,76,129);doc.rect(0,0,210,24,'F');doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);doc.text('PROJECTS',13,16);doc.setTextColor(30,41,59);
+  doc.autoTable({startY:30,head:[['Code','Project Name','Client','Value (₹)','Status','Progress']],body:ps.map(p=>[p.code||'—',p.name,getCName(p.client),'₹'+fmtN(p.value),p.status,(p.progress||0)+'%']),styles:{fontSize:9},headStyles:{fillColor:[15,76,129]},theme:'grid'});}
+  // Bills
+  if(bi.length){doc.addPage();doc.setFillColor(15,76,129);doc.rect(0,0,210,24,'F');doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);doc.text('BILLS & INVOICES',13,16);doc.setTextColor(30,41,59);
+  doc.autoTable({startY:30,head:[['Bill No.','Project','Client','Date','Gross','Net Amt','Status']],body:bi.map(b=>[b.no,getPName(b.project),b.client||'—',b.date||'—','₹'+fmtN(b.gross),'₹'+fmtN(b.net),b.status]),foot:[['','','','','Total:','₹'+fmtN(tb),'']],styles:{fontSize:9},headStyles:{fillColor:[15,76,129]},footStyles:{fontStyle:'bold',fillColor:[240,244,248]},theme:'grid'});}
+  // Expenses
+  if(ex.length){doc.addPage();doc.setFillColor(15,76,129);doc.rect(0,0,210,24,'F');doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);doc.text('SITE EXPENSES',13,16);doc.setTextColor(30,41,59);
+  const et=ex.reduce((s,e)=>s+(+e.amt||0),0);
+  doc.autoTable({startY:30,head:[['Date','Project','Category','Description','Amount','Paid To']],body:ex.map(e=>[e.date||'—',getPName(e.project),e.category,e.desc||'—','₹'+fmtN(e.amt),e.paid||'—']),foot:[['','','','','₹'+fmtN(et),'']],styles:{fontSize:9},headStyles:{fillColor:[15,76,129]},footStyles:{fontStyle:'bold',fillColor:[240,244,248]},theme:'grid'});}
+  // P&L Summary
+  if(ps.length){
+    doc.addPage();doc.setFillColor(15,76,129);doc.rect(0,0,210,24,'F');doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);doc.text('PROJECT-WISE P&L SUMMARY',13,16);doc.setTextColor(30,41,59);
+    const rows=ps.map(p=>{
+      const pbi=bi.filter(b=>b.project===p.id).reduce((s,b)=>s+(+b.net||0),0);
+      const pc=(ex.filter(e=>e.project===p.id).reduce((s,e)=>s+(+e.amt||0),0))+(po.filter(x=>x.project===p.id).reduce((s,x)=>s+(+x.amt||0),0));
+      const gp=pbi-pc;
+      return[p.name,p.status,'₹'+fmtN(p.value),'₹'+fmtN(pbi),'₹'+fmtN(pc),'₹'+fmtN(gp),(pbi>0?(gp/pbi*100).toFixed(1):0)+'%'];
+    });
+    doc.autoTable({startY:30,head:[['Project','Status','Contract','Billed','Cost','Profit/Loss','Margin']],body:rows,foot:[['TOTAL','','₹'+fmtN(ps.reduce((s,p)=>s+(+p.value||0),0)),'₹'+fmtN(tb),'₹'+fmtN(tc),'₹'+fmtN(tb-tc),(tb>0?((tb-tc)/tb*100).toFixed(1):0)+'%']],styles:{fontSize:9},headStyles:{fillColor:[15,76,129]},footStyles:{fontStyle:'bold',fillColor:[240,244,248]},theme:'grid'});
+  }
+  const n=doc.internal.getNumberOfPages();
+  for(let i=2;i<=n;i++){doc.setPage(i);doc.setFillColor(15,76,129);doc.rect(0,285,210,12,'F');doc.setFontSize(7.5);doc.setTextColor(255,255,255);doc.text(CO+' | Confidential ERP Report',13,292);doc.text('Page '+i+' of '+n,197,292,{align:'right'});doc.setTextColor(30,41,59);}
+  doc.save('ADI_Construction_ERP_'+new Date().toISOString().split('T')[0]+'.pdf');
+}
+
+function exportJSON(){
+  const data={clients:DB.get('clients'),projects:DB.get('projects'),vendors:DB.get('vendors'),materials:DB.get('materials'),employees:DB.get('employees'),contracts:DB.get('contracts'),workorders:DB.get('workorders'),boqs:DB.get('boqs'),rates:DB.get('rates'),purchases:DB.get('purchases'),expenses:DB.get('expenses'),bills:DB.get('bills'),receipts:DB.get('receipts')};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ADI_ERP_Backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();
+}
+
+
+// ===== MATERIAL CATEGORIES =====
+const DEFAULT_CATS=['Cement','Steel','Aggregate','Sand','Brick','Gabion Box','Timber','Paint','Tiles','Electrical','Plumbing','Hardware','Waterproofing','Chemicals','Other'];
+function getMCats(){
+  const stored=DB.get('matcats');
+  return stored.length?stored:DEFAULT_CATS;
+}
+function popMCat(){
+  const el=document.getElementById('m-cat');if(!el)return;
+  const cur=el.value;
+  el.innerHTML='';
+  getMCats().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;el.appendChild(o);});
+  if(cur)el.value=cur;
+}
+function openCatMgr(){
+  renderCatList();
+  document.getElementById('mo-catmgr').classList.add('open');
+}
+function closeCatMgr(){
+  document.getElementById('mo-catmgr').classList.remove('open');
+  popMCat();
+}
+function renderCatList(){
+  const cats=getMCats();
+  const el=document.getElementById('cat-list');
+  el.innerHTML=cats.map((c,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-bottom:1px solid var(--br);font-size:13px"><span>${c}</span><button onclick="deleteCat(${i})" style="background:none;border:none;cursor:pointer;color:var(--er);font-size:16px;line-height:1" title="Remove">×</button></div>`).join('')||'<div style="padding:12px;color:var(--tm);text-align:center;font-size:13px">No categories yet</div>';
+}
+function addCat(){
+  const inp=document.getElementById('new-cat-input');
+  const val=inp.value.trim();if(!val)return;
+  const cats=getMCats();
+  if(cats.includes(val)){inp.value='';return alert('Category already exists');}
+  cats.push(val);DB.set('matcats',cats);
+  inp.value='';renderCatList();
+}
+function deleteCat(idx){
+  const cats=getMCats();
+  cats.splice(idx,1);
+  DB.set('matcats',cats);
+  renderCatList();
+}
+
+// ===== ARCHIVE =====
+function renderArchive(){
+  const filter=document.getElementById('arch-filter')?.value;
+  let list=DB.get('archive');
+  if(filter)list=list.filter(a=>a._archType===filter);
+  list=[...list].reverse(); // newest first
+  const typeLabels={client:'👤 Client',project:'🏗 Project',vendor:'🏭 Vendor',material:'🧱 Material',employee:'👷 Employee',contract:'📜 Contract',wo:'📋 Work Order',boq:'📐 BOQ Item',rate:'📊 Rate',po:'🛒 PO',expense:'💸 Expense',bill:'🧾 Bill',receipt:'💰 Receipt'};
+  function keyDetail(a){
+    if(a._archType==='bill') return `Net: ${fmt(a.net)} | ${a.status||''}`;
+    if(a._archType==='project') return `Value: ${fmt(a.value)} | ${a.status||''}`;
+    if(a._archType==='expense') return `Amt: ${fmt(a.amt)} | ${a.category||''}`;
+    if(a._archType==='po') return `Amt: ${fmt(a.amt)} | ${a.status||''}`;
+    if(a._archType==='receipt') return `Amt: ${fmt(a.amt)} | ${a.mode||''}`;
+    if(a._archType==='contract') return `Value: ${fmt(a.value)} | ${a.status||''}`;
+    if(a._archType==='wo') return `Value: ${fmt(a.value)} | ${a.status||''}`;
+    if(a._archType==='boq') return `Qty:${a.qty||0} ${a.unit||''} × ${fmt(a.rate)}`;
+    if(a._archType==='rate') return `Total Rate: ${fmt(a.total)}`;
+    if(a._archType==='material') return `${a.category||''} | ${a.unit||''} | ${fmt(a.rate)}`;
+    return a.mobile||a.gst||a.date||'—';
+  }
+  document.getElementById('tb-archive').innerHTML=list.length?
+    list.map((a,i)=>`<tr>
+      <td><span class="bge bg-gy">${typeLabels[a._archType]||a._archType}</span></td>
+      <td><strong>${a._archName||a.name||a.no||a.desc||'—'}</strong></td>
+      <td style="font-size:11px;color:var(--tm)">${a._archDate||'—'}</td>
+      <td style="font-size:11px">${a._archBy||'Admin'}</td>
+      <td style="font-size:11px;color:var(--tm)">${keyDetail(a)}</td>
+      <td><button class="btn bp" style="font-size:11px;padding:4px 8px" onclick="restoreArchive(${list.length-1-i})">↩ Restore</button></td>
+    </tr>`).join(''):
+    '<tr class="er-row"><td colspan="6">No archived records yet. Deleted records will appear here.</td></tr>';
+  // summary count
+  const total=DB.get('archive').length;
+  document.querySelector('#pg-archive .stb').textContent=`${total} total archived record${total!==1?'s':''}`;
+}
+function restoreArchive(idx){
+  // idx is index in reversed list, convert to original
+  const archive=DB.get('archive');
+  const realIdx=archive.length-1-idx;
+  const record=archive[realIdx];
+  if(!record)return;
+  if(!confirm(`Restore "${record._archName||record.name||'this record'}" back to ${record._archType}s?`))return;
+  const key=record._archKey||({po:'purchases',wo:'workorders',contract:'contracts'}[record._archType]||(record._archType+'s'));
+  const list=DB.get(key);
+  // Remove archive meta fields
+  const clean={...record};
+  delete clean._archType;delete clean._archKey;delete clean._archDate;delete clean._archBy;delete clean._archName;
+  list.push(clean);
+  DB.set(key,list);
+  archive.splice(realIdx,1);
+  DB.set('archive',archive);
+  renderArchive();
+  log(`Restored: ${record._archType} "${record._archName||record.name||''}"`);
+  alert('Record restored successfully!');
+}
+function clearArchive(){
+  if(!confirm('Permanently delete ALL archived records? This cannot be undone.'))return;
+  const pwd=prompt('Enter admin password to confirm permanent deletion:');
+  if(pwd!==DEL_PWD){alert('Incorrect password.');return;}
+  DB.set('archive',[]);
+  renderArchive();
+}
+
+// ===== INIT =====
+document.getElementById('tb-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+renderDash();
+</script>
+
+<!-- CATEGORY MANAGER MODAL -->
+<div class="mo" id="mo-catmgr"><div class="md" style="width:420px">
+  <div class="mh"><h3>⚙ Manage Material Categories</h3><button class="mc2" onclick="closeCatMgr()">×</button></div>
+  <div class="mb">
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <input id="new-cat-input" placeholder="New category name..." style="flex:1" onkeydown="if(event.key==='Enter')addCat()">
+      <button class="btn bp" onclick="addCat()">+ Add</button>
+    </div>
+    <div id="cat-list" style="max-height:300px;overflow-y:auto;border:1px solid var(--br);border-radius:8px;padding:4px"></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeCatMgr()">Close</button></div>
+</div></div>
+
+<!-- PASSWORD DELETE MODAL -->
+<div class="mo" id="mo-pwdel"><div class="md" style="width:380px">
+  <div class="mh"><h3>🔐 Password Required to Delete</h3><button class="mc2" onclick="closePwDel()">×</button></div>
+  <div class="mb">
+    <p style="font-size:13px;color:var(--tm);margin-bottom:14px">This action is protected. Enter the admin password to delete this record. It will be archived for future reference.</p>
+    <div class="fgr">
+      <label>Admin Password</label>
+      <input type="password" id="pw-input" placeholder="Enter password..." onkeydown="if(event.key==='Enter')confirmDel()">
+    </div>
+    <div id="pw-error" style="color:var(--er);font-size:12px;margin-top:8px;display:none">❌ Incorrect password. Please try again.</div>
+  </div>
+  <div class="mf">
+    <button class="btn bo" onclick="closePwDel()">Cancel</button>
+    <button class="btn bd" onclick="confirmDel()">🗑 Delete & Archive</button>
+  </div>
+</div></div>
+
+</body>
+</html>
