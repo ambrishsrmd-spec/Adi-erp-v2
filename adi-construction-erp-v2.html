@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ADI Construction ERP v2.0</title>
+<title>ADI Construction ERP v4.0</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
@@ -47,6 +47,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--su2)}
 .mo{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000}
 .mo.open{display:flex}
 .md{background:var(--su);border-radius:12px;width:550px;max-width:96vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.md.wide{width:850px}
 .mh{padding:16px 20px 12px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between}
 .mh h3{font-size:14px;font-weight:600}.mc2{background:none;border:none;font-size:20px;cursor:pointer;color:var(--tm);line-height:1}
 .mb{padding:16px 20px}.mf{padding:12px 20px;border-top:1px solid var(--br);display:flex;justify-content:flex-end;gap:8px}
@@ -73,6 +74,15 @@ input[readonly]{background:var(--su2);color:var(--tm)}textarea{resize:vertical;m
 .pf{height:100%;border-radius:4px;background:var(--pr)}.mt{margin-top:12px}
 .sr{position:relative}.sr input{padding-left:26px;width:180px}.sr::before{content:'🔍';position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:11px}
 code{font-size:10px;background:var(--su2);padding:1px 4px;border-radius:3px;border:1px solid var(--br)}
+.boq-rows{border:1px solid var(--br);border-radius:8px;overflow:hidden;margin-top:4px}
+.boq-rows table{width:100%}
+.boq-rows th{font-size:9px;padding:6px 6px}
+.boq-rows td{padding:4px 5px;border-bottom:1px solid var(--br);vertical-align:middle}
+.boq-rows input,.boq-rows select{padding:5px 6px;font-size:11px}
+.boq-rows .ramt{font-weight:600;font-size:11px;white-space:nowrap;padding-right:6px}
+.boq-rmv{background:none;border:none;color:var(--er);font-size:16px;cursor:pointer;line-height:1;padding:2px 6px}
+.boq-addrow{margin-top:8px;font-size:11px;padding:6px 10px;background:var(--su2);border:1px dashed var(--br);border-radius:7px;cursor:pointer;color:var(--pr);font-weight:600}
+.boq-total-row{background:var(--su2);font-weight:700}
 @media print{.sb,.tb,.no-print,.ab,.mo{display:none!important}.main,.cnt{overflow:visible!important;height:auto!important}.pg{display:block!important}.cnt{padding:0!important}}
 </style>
 </head>
@@ -81,7 +91,7 @@ code{font-size:10px;background:var(--su2);padding:1px 4px;border-radius:3px;bord
   <div class="sb-logo">
     <div class="co">🏗 ADI Construction</div>
     <div class="tg">Project ERP System</div>
-    <div class="bv">v2.0 PRO</div>
+    <div class="bv">v4.0 PRO</div>
   </div>
   <nav class="ng"><div class="nl">Overview</div>
     <div class="ni active" onclick="nav('dashboard')">📊 Dashboard</div>
@@ -135,6 +145,7 @@ code{font-size:10px;background:var(--su2);padding:1px 4px;border-radius:3px;bord
     <div id="pg-clients" class="pg">
       <div class="sh"><div><div class="st">Clients</div><div class="stb">Client master database</div></div>
         <div style="display:flex;gap:7px"><div class="sr"><input placeholder="Search..." oninput="renderClients(this.value)"></div>
+        <button class="btn bpdf no-print" onclick="exportClientsPDF()">📄 PDF</button>
         <button class="btn bp" onclick="openModal('client')">+ Add Client</button></div>
       </div>
       <div class="tc"><table><thead><tr><th>#</th><th>Client Name</th><th>Contact</th><th>Mobile</th><th>GST No.</th><th>Projects</th><th>Actions</th></tr></thead>
@@ -148,6 +159,7 @@ code{font-size:10px;background:var(--su2);padding:1px 4px;border-radius:3px;bord
           <select id="proj-filter" onchange="renderProjects()" style="padding:6px 8px;border:1px solid var(--br);border-radius:7px;font-size:12px">
             <option value="">All Status</option><option>Planning</option><option>Running</option><option>Completed</option><option>Hold</option>
           </select>
+          <button class="btn bpdf no-print" onclick="exportProjectsPDF()">📄 PDF</button>
           <button class="btn bp" onclick="openModal('project')">+ Add Project</button>
         </div>
       </div>
@@ -158,7 +170,9 @@ code{font-size:10px;background:var(--su2);padding:1px 4px;border-radius:3px;bord
     <!-- VENDORS -->
     <div id="pg-vendors" class="pg">
       <div class="sh"><div><div class="st">Vendors</div><div class="stb">Suppliers & subcontractors</div></div>
-        <button class="btn bp" onclick="openModal('vendor')">+ Add Vendor</button></div>
+        <div style="display:flex;gap:7px">
+        <button class="btn bpdf no-print" onclick="exportVendorsPDF()">📄 PDF</button>
+        <button class="btn bp" onclick="openModal('vendor')">+ Add Vendor</button></div></div>
       <div class="tc"><table><thead><tr><th>#</th><th>Vendor Name</th><th>Contact</th><th>Mobile</th><th>GST</th><th>Category</th><th>Actions</th></tr></thead>
       <tbody id="tb-vendors"></tbody></table></div>
     </div>
@@ -166,7 +180,9 @@ code{font-size:10px;background:var(--su2);padding:1px 4px;border-radius:3px;bord
     <!-- MATERIALS -->
     <div id="pg-materials" class="pg">
       <div class="sh"><div><div class="st">Material Master</div><div class="stb">Materials with auto-code & rates</div></div>
-        <button class="btn bp" onclick="openModal('material')">+ Add Material</button></div>
+        <div style="display:flex;gap:7px">
+        <button class="btn bpdf no-print" onclick="exportMaterialsPDF()">📄 PDF</button>
+        <button class="btn bp" onclick="openModal('material')">+ Add Material</button></div></div>
       <div class="tc"><table><thead><tr><th>Code</th><th>Material Name</th><th>Category</th><th>Unit</th><th>Rate (₹)</th><th>Actions</th></tr></thead>
       <tbody id="tb-materials"></tbody></table></div>
     </div>
@@ -174,7 +190,9 @@ code{font-size:10px;background:var(--su2);padding:1px 4px;border-radius:3px;bord
     <!-- EMPLOYEES -->
     <div id="pg-employees" class="pg">
       <div class="sh"><div><div class="st">Employees</div><div class="stb">Site team & office staff</div></div>
-        <button class="btn bp" onclick="openModal('employee')">+ Add Employee</button></div>
+        <div style="display:flex;gap:7px">
+        <button class="btn bpdf no-print" onclick="exportEmployeesPDF()">📄 PDF</button>
+        <button class="btn bp" onclick="openModal('employee')">+ Add Employee</button></div></div>
       <div class="tc"><table><thead><tr><th>Code</th><th>Name</th><th>Designation</th><th>Role</th><th>Project</th><th>Salary</th><th>Actions</th></tr></thead>
       <tbody id="tb-employees"></tbody></table></div>
     </div>
@@ -201,7 +219,7 @@ code{font-size:10px;background:var(--su2);padding:1px 4px;border-radius:3px;bord
         <div style="display:flex;gap:7px">
           <select id="boq-filter" onchange="renderBOQ()" style="padding:6px 8px;border:1px solid var(--br);border-radius:7px;font-size:12px;width:180px"><option value="">All Projects</option></select>
           <button class="btn bpdf no-print" onclick="exportBOQPDF()">📄 PDF</button>
-          <button class="btn bp" onclick="openModal('boq')">+ Add Item</button>
+          <button class="btn bp" onclick="openModal('boq')">+ Add Item(s)</button>
         </div>
       </div>
       <div class="tc"><table><thead><tr><th>Item No.</th><th>Project</th><th>Description</th><th>Unit</th><th>Qty</th><th>Rate (₹)</th><th>Amount (₹)</th><th>Actions</th></tr></thead>
@@ -430,39 +448,24 @@ code{font-size:10px;background:var(--su2);padding:1px 4px;border-radius:3px;bord
   <div class="mf"><button class="btn bo" onclick="closeModal('wo')">Cancel</button><button class="btn bp" onclick="saveWO()">Save WO</button></div>
 </div></div>
 
-<!-- BOQ -->
-<div class="mo" id="mo-boq"><div class="md">
-  <div class="mh"><h3>BOQ Item</h3><button class="mc2" onclick="closeModal('boq')">×</button></div>
-  <div class="mb"><div class="fg">
-    <div class="fgr"><label>Item No.</label><input id="b-no" placeholder="e.g. 1.1"></div>
-    <div class="fgr"><label>Project *</label><select id="b-proj"><option value="">Select</option></select></div>
-    <div class="fgr s2"><label>Description *</label><input id="b-desc"></div>
-    <div class="fgr"><label>Unit</label><select id="b-unit"><option value="Sqft">Sqft — Square Foot</option>
-<option value="Sqm">Sqm — Square Metre</option>
-<option value="Cft">Cft — Cubic Foot</option>
-<option value="Cum">Cum — Cubic Metre (m³)</option>
-<option value="Rft">Rft — Running Foot</option>
-<option value="Rmt">Rmt — Running Metre</option>
-<option value="Kg">Kg — Kilogram</option>
-<option value="MT">MT — Metric Ton</option>
-<option value="Nos">Nos — Numbers</option>
-<option value="Set">Set</option>
-<option value="Pair">Pair</option>
-<option value="Bag">Bag — Cement Bag (50 Kg)</option>
-<option value="Ltr">Ltr — Litre</option>
-<option value="KL">KL — Kilo Litre</option>
-<option value="Trip">Trip — Per Trip</option>
-<option value="Day">Day — Per Day</option>
-<option value="Hr">Hr — Hour</option>
-<option value="Month">Month — Per Month</option>
-<option value="Lot">Lot — Lump Sum Lot</option>
-<option value="LS">LS — Lump Sum</option>
-<option value="Job">Job — Per Job</option></select></div>
-    <div class="fgr"><label>Quantity</label><input id="b-qty" type="number" oninput="calcBOQ()"></div>
-    <div class="fgr"><label>Rate (₹)</label><input id="b-rate" type="number" oninput="calcBOQ()"></div>
-    <div class="fgr"><label>Amount (₹)</label><input id="b-amt" readonly></div>
-  </div></div>
-  <div class="mf"><button class="btn bo" onclick="closeModal('boq')">Cancel</button><button class="btn bp" onclick="saveBOQ()">Save Item</button></div>
+<!-- BOQ — multi item entry -->
+<div class="mo" id="mo-boq"><div class="md wide">
+  <div class="mh"><h3>BOQ Item(s)</h3><button class="mc2" onclick="closeModal('boq')">×</button></div>
+  <div class="mb">
+    <div class="fg" style="margin-bottom:12px">
+      <div class="fgr"><label>Project *</label><select id="b-proj" onchange="boqProjChanged()"><option value="">Select</option></select></div>
+      <div class="fgr"><label></label><div style="font-size:11px;color:var(--tm);padding-top:7px">Add as many line items as you need below, then Save All.</div></div>
+    </div>
+    <div class="boq-rows">
+      <table>
+        <thead><tr><th style="width:60px">Item No.</th><th>Description</th><th style="width:90px">Unit</th><th style="width:85px">Qty</th><th style="width:100px">Rate (₹)</th><th style="width:110px">Amount (₹)</th><th style="width:30px"></th></tr></thead>
+        <tbody id="boq-row-body"></tbody>
+        <tfoot><tr class="boq-total-row"><td colspan="5" style="text-align:right;padding:7px 8px">Total (this batch):</td><td class="ramt" id="boq-modal-total">₹0</td><td></td></tr></tfoot>
+      </table>
+    </div>
+    <button type="button" class="boq-addrow" onclick="addBoqRow()">+ Add another line item</button>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeModal('boq')">Cancel</button><button class="btn bp" onclick="saveBOQ()">💾 Save All Items</button></div>
 </div></div>
 
 <!-- RATE ANALYSIS -->
@@ -569,8 +572,22 @@ const DB={get:k=>JSON.parse(localStorage.getItem('adi_'+k)||'[]'),set:(k,v)=>loc
 let EID={};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
 const td=()=>new Date().toISOString().split('T')[0];
-const fmt=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});
-const fmtN=n=>Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});
+
+// ===== INDIAN NUMBER FORMATTING (lakh/crore grouping) =====
+// Produces strings like 15,000 | 1,12,000 | 12,50,500
+function inrGroup(num){
+  num=Math.round(Number(num)||0);
+  const neg=num<0;num=Math.abs(num);
+  let s=String(num);
+  let lastThree=s.length>3?s.slice(-3):s;
+  let rest=s.length>3?s.slice(0,-3):'';
+  if(rest!==''){lastThree=','+lastThree;}
+  let out=rest.replace(/\B(?=(\d{2})+(?!\d))/g,',')+lastThree;
+  return (neg?'-':'')+out;
+}
+const fmt=n=>'₹'+inrGroup(n);
+const fmtN=n=>inrGroup(n);
+
 const gv=id=>{const e=document.getElementById(id);return e?e.value.trim():'';}
 const sv=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||'';}
 
@@ -606,6 +623,21 @@ function openModal(type,id){
   popProj();popClientSel();popVendorSel();popEmpProj();
   const m=document.getElementById('mo-'+type);
   if(type==='material')popMCat();
+  if(type==='boq'){
+    if(id){
+      const list=DB.get('boqs');
+      const d=list.find(x=>x.id===id);
+      document.getElementById('boq-row-body').innerHTML='';
+      if(d){sv('b-proj',d.project);addBoqRow(d);}
+      else addBoqRow();
+    }else{
+      document.getElementById('boq-row-body').innerHTML='';
+      addBoqRow();
+    }
+    updateBoqModalTotal();
+    if(m)m.classList.add('open');
+    return;
+  }
   if(id){
     const key={po:'purchases',wo:'workorders',contract:'contracts'}[type]||(type+'s');
     const d=DB.get(key).find(x=>x.id===id);
@@ -621,6 +653,7 @@ function openModal(type,id){
 function closeModal(t){
   const m=document.getElementById('mo-'+t);if(m)m.classList.remove('open');
   m&&m.querySelectorAll('input:not([readonly]),textarea').forEach(e=>e.value='');
+  if(t==='boq')document.getElementById('boq-row-body').innerHTML='';
   EID[t]=null;
 }
 function fillForm(t,d){
@@ -632,7 +665,6 @@ function fillForm(t,d){
   if(t==='employee'){f('e-code',d.code);f('e-name',d.name);f('e-designation',d.dsg);f('e-mobile',d.mobile);f('e-role',d.role);f('e-project',d.project||'');f('e-salary',d.salary);}
   if(t==='contract'){f('ct-no',d.no);f('ct-date',d.date);f('ct-proj',d.project);f('ct-client',d.client);f('ct-value',d.value);f('ct-status',d.status);f('ct-ret',d.ret);f('ct-adv',d.adv);f('ct-scope',d.scope);f('ct-terms',d.terms);}
   if(t==='wo'){f('wo-no',d.no);f('wo-date',d.date);f('wo-proj',d.project);f('wo-vendor',d.vendor);f('wo-value',d.value);f('wo-ret',d.ret);f('wo-start',d.start);f('wo-end',d.end);f('wo-status',d.status);f('wo-pay',d.pay);f('wo-scope',d.scope);}
-  if(t==='boq'){f('b-no',d.no);f('b-proj',d.project);f('b-desc',d.desc);f('b-unit',d.unit);f('b-qty',d.qty);f('b-rate',d.rate);f('b-amt',d.amt);}
   if(t==='rate'){f('r-code',d.code);f('r-name',d.name);f('r-unit',d.unit);f('r-mat',d.mat);f('r-lab',d.lab);f('r-mac',d.mac);f('r-oh',d.oh);f('r-total',d.total);}
   if(t==='po'){f('po-no',d.no);f('po-date',d.date);f('po-vendor',d.vendor);f('po-proj',d.project);f('po-amt',d.amt);f('po-status',d.status);f('po-items',d.items);f('po-terms',d.terms);}
   if(t==='expense'){f('ex-date',d.date);f('ex-proj',d.project);f('ex-cat',d.category);f('ex-amt',d.amt);f('ex-desc',d.desc);f('ex-paid',d.paid);}
@@ -673,6 +705,12 @@ function popEmpProj(){
   const cur=el.value;el.innerHTML='<option value="">Not Assigned</option>';
   projs.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;el.appendChild(o);});
   if(cur)el.value=cur;
+}
+
+// ===== UNIT OPTIONS (shared, used in BOQ dynamic rows) =====
+const UNIT_OPTS=[['Sqft','Sqft — Square Foot'],['Sqm','Sqm — Square Metre'],['Cft','Cft — Cubic Foot'],['Cum','Cum — Cubic Metre (m³)'],['Rft','Rft — Running Foot'],['Rmt','Rmt — Running Metre'],['Kg','Kg — Kilogram'],['MT','MT — Metric Ton'],['Nos','Nos — Numbers'],['Set','Set'],['Pair','Pair'],['Bag','Bag — Cement Bag (50 Kg)'],['Ltr','Ltr — Litre'],['KL','KL — Kilo Litre'],['Trip','Trip — Per Trip'],['Day','Day — Per Day'],['Hr','Hr — Hour'],['Month','Month — Per Month'],['Lot','Lot — Lump Sum Lot'],['LS','LS — Lump Sum'],['Job','Job — Per Job']];
+function unitOptionsHTML(sel){
+  return UNIT_OPTS.map(([v,l])=>`<option value="${v}"${v===sel?' selected':''}>${l}</option>`).join('');
 }
 
 // ===== SAVE =====
@@ -720,13 +758,81 @@ function saveWO(){
   upsert(list,id,{id,no:gv('wo-no'),date:gv('wo-date'),project:p,vendor:gv('wo-vendor'),value:+gv('wo-value')||0,ret:+gv('wo-ret')||5,start:gv('wo-start'),end:gv('wo-end'),status:gv('wo-status'),pay:gv('wo-pay'),scope:gv('wo-scope')});
   DB.set('workorders',list);closeModal('wo');renderWOs();log('WO '+gv('wo-no')+' saved');
 }
-function saveBOQ(){
-  const desc=gv('b-desc');if(!desc)return alert('Description required');
-  const list=DB.get('boqs'),id=EID.boq||uid();
-  const qty=+gv('b-qty')||0,rate=+gv('b-rate')||0;
-  upsert(list,id,{id,no:gv('b-no'),project:gv('b-proj'),desc,unit:gv('b-unit'),qty,rate,amt:qty*rate});
-  DB.set('boqs',list);closeModal('boq');renderBOQ();log('BOQ "'+desc+'" saved');
+
+// ===== BOQ — MULTI ITEM ROWS =====
+let boqRowSeq=0;
+function addBoqRow(prefill){
+  const tbody=document.getElementById('boq-row-body');
+  const rid='br'+(++boqRowSeq);
+  const tr=document.createElement('tr');
+  tr.id=rid;
+  tr.dataset.recId=prefill&&prefill.id?prefill.id:'';
+  tr.innerHTML=`
+    <td><input type="text" class="bq-no" value="${prefill?(prefill.no||''):''}" placeholder="1.1"></td>
+    <td><input type="text" class="bq-desc" value="${prefill?(prefill.desc||'').replace(/"/g,'&quot;'):''}" placeholder="Description *"></td>
+    <td><select class="bq-unit">${unitOptionsHTML(prefill?prefill.unit:'Sqft')}</select></td>
+    <td><input type="number" class="bq-qty" value="${prefill?(prefill.qty||''):''}" oninput="boqRowCalc('${rid}')"></td>
+    <td><input type="number" class="bq-rate" value="${prefill?(prefill.rate||''):''}" oninput="boqRowCalc('${rid}')"></td>
+    <td class="ramt" id="${rid}-amt">₹${prefill?fmtN(prefill.amt||0):'0'}</td>
+    <td><button type="button" class="boq-rmv" onclick="removeBoqRow('${rid}')" title="Remove row">×</button></td>`;
+  tbody.appendChild(tr);
+  updateBoqModalTotal();
 }
+function removeBoqRow(rid){
+  const tbody=document.getElementById('boq-row-body');
+  if(tbody.children.length<=1){ // keep at least one row, just clear it
+    const tr=document.getElementById(rid);
+    if(tr){
+      tr.querySelector('.bq-no').value='';
+      tr.querySelector('.bq-desc').value='';
+      tr.querySelector('.bq-qty').value='';
+      tr.querySelector('.bq-rate').value='';
+      tr.dataset.recId='';
+      boqRowCalc(rid);
+    }
+    return;
+  }
+  const el=document.getElementById(rid);if(el)el.remove();
+  updateBoqModalTotal();
+}
+function boqRowCalc(rid){
+  const tr=document.getElementById(rid);if(!tr)return;
+  const q=+tr.querySelector('.bq-qty').value||0,r=+tr.querySelector('.bq-rate').value||0;
+  document.getElementById(rid+'-amt').textContent='₹'+fmtN(q*r);
+  updateBoqModalTotal();
+}
+function updateBoqModalTotal(){
+  const tbody=document.getElementById('boq-row-body');if(!tbody)return;
+  let total=0;
+  tbody.querySelectorAll('tr').forEach(tr=>{
+    const q=+tr.querySelector('.bq-qty').value||0,r=+tr.querySelector('.bq-rate').value||0;
+    total+=q*r;
+  });
+  const el=document.getElementById('boq-modal-total');if(el)el.textContent=fmt(total);
+}
+function boqProjChanged(){/* hook for future use */}
+
+function saveBOQ(){
+  const proj=gv('b-proj');if(!proj)return alert('Project required');
+  const tbody=document.getElementById('boq-row-body');
+  const rows=[...tbody.querySelectorAll('tr')];
+  const list=DB.get('boqs');
+  let saved=0;
+  rows.forEach(tr=>{
+    const desc=tr.querySelector('.bq-desc').value.trim();
+    if(!desc)return; // skip empty rows silently
+    const qty=+tr.querySelector('.bq-qty').value||0;
+    const rate=+tr.querySelector('.bq-rate').value||0;
+    const no=tr.querySelector('.bq-no').value.trim();
+    const unit=tr.querySelector('.bq-unit').value;
+    const id=tr.dataset.recId||uid();
+    upsert(list,id,{id,no,project:proj,desc,unit,qty,rate,amt:qty*rate});
+    saved++;
+  });
+  if(!saved)return alert('Please enter at least one item with a description');
+  DB.set('boqs',list);closeModal('boq');renderBOQ();log(saved+' BOQ item(s) saved');
+}
+
 function saveRate(){
   const n=gv('r-name');if(!n)return alert('Name required');
   const list=DB.get('rates'),id=EID.rate||uid();
@@ -956,7 +1062,6 @@ function log(m){const l=getLogs();l.push({m,t:new Date().toLocaleString('en-IN',
 function getLogs(){return JSON.parse(localStorage.getItem('adi_log')||'[]');}
 
 // ===== CALC HELPERS =====
-function calcBOQ(){const q=+document.getElementById('b-qty')?.value||0,r=+document.getElementById('b-rate')?.value||0;const e=document.getElementById('b-amt');if(e)e.value=Math.round(q*r);}
 function calcRate(){const m=+document.getElementById('r-mat')?.value||0,l=+document.getElementById('r-lab')?.value||0,mc=+document.getElementById('r-mac')?.value||0,oh=+document.getElementById('r-oh')?.value||0;const e=document.getElementById('r-total');if(e)e.value=Math.round((m+l+mc)*(1+oh/100));}
 function calcBill(){const g=+document.getElementById('bi-gross')?.value||0,r=+document.getElementById('bi-ret')?.value||0,gst=+document.getElementById('bi-gst')?.value||0;const e=document.getElementById('bi-net');if(e)e.value=Math.round(g*(1-r/100)*(1+gst/100));}
 function fillBillClient(){const pid=document.getElementById('bi-proj')?.value;const p=DB.get('projects').find(x=>x.id===pid);const c=p?DB.get('clients').find(x=>x.id===p.client):null;const e=document.getElementById('bi-client');if(e)e.value=c?c.name:'';}
@@ -1165,6 +1270,61 @@ function exportRecPDF(){
   addFooters(doc);doc.save('Receipts_Report.pdf');
 }
 
+function exportClientsPDF(){
+  const list=DB.get('clients');if(!list.length)return alert('No clients to export');
+  const ps=DB.get('projects');
+  const doc=mkPDF('CLIENT MASTER LIST');
+  doc.autoTable({startY:32,head:[['#','Client Name','Contact','Mobile','GST No.','Projects']],
+    body:list.map((c,i)=>[i+1,c.name,c.contact||'—',c.mobile||'—',c.gst||'—',ps.filter(p=>p.client===c.id).length||0]),
+    styles:{fontSize:9.5},headStyles:{fillColor:[15,76,129]},theme:'grid'});
+  addFooters(doc);doc.save('Clients_List.pdf');
+}
+
+function exportProjectsPDF(){
+  const f=document.getElementById('proj-filter')?.value;
+  let list=DB.get('projects');if(f)list=list.filter(p=>p.status===f);
+  if(!list.length)return alert('No projects to export');
+  const cl=DB.get('clients');
+  const doc=mkPDF('PROJECTS LIST');
+  const total=list.reduce((s,p)=>s+(+p.value||0),0);
+  doc.autoTable({startY:32,head:[['Code','Project Name','Client','Contract Value (₹)','Start','End','Status','Progress']],
+    body:list.map(p=>{const c=cl.find(x=>x.id===p.client);return[p.code||'—',p.name,c?c.name:'—',fmtN(p.value),p.start||'—',p.end||'—',p.status,(p.progress||0)+'%'];}),
+    foot:[['','','Total:',fmtN(total),'','','','']],
+    styles:{fontSize:8.5},headStyles:{fillColor:[15,76,129]},footStyles:{fillColor:[240,244,248],fontStyle:'bold'},
+    columnStyles:{3:{halign:'right'}},theme:'grid'});
+  addFooters(doc);doc.save('Projects_List.pdf');
+}
+
+function exportVendorsPDF(){
+  const list=DB.get('vendors');if(!list.length)return alert('No vendors to export');
+  const doc=mkPDF('VENDOR MASTER LIST');
+  doc.autoTable({startY:32,head:[['#','Vendor Name','Contact','Mobile','GST No.','Category']],
+    body:list.map((v,i)=>[i+1,v.name,v.contact||'—',v.mobile||'—',v.gst||'—',v.category||'—']),
+    styles:{fontSize:9.5},headStyles:{fillColor:[15,76,129]},theme:'grid'});
+  addFooters(doc);doc.save('Vendors_List.pdf');
+}
+
+function exportMaterialsPDF(){
+  const list=DB.get('materials');if(!list.length)return alert('No materials to export');
+  const doc=mkPDF('MATERIAL MASTER LIST');
+  doc.autoTable({startY:32,head:[['Code','Material Name','Category','Unit','Rate (₹)']],
+    body:list.map(m=>[m.code||'—',m.name,m.category||'—',m.unit,fmtN(m.rate)]),
+    styles:{fontSize:9.5},headStyles:{fillColor:[15,76,129]},columnStyles:{4:{halign:'right'}},theme:'grid'});
+  addFooters(doc);doc.save('Materials_List.pdf');
+}
+
+function exportEmployeesPDF(){
+  const list=DB.get('employees');if(!list.length)return alert('No employees to export');
+  const total=list.reduce((s,e)=>s+(+e.salary||0),0);
+  const doc=mkPDF('EMPLOYEE LIST');
+  doc.autoTable({startY:32,head:[['Code','Name','Designation','Role','Project','Salary (₹/mo)']],
+    body:list.map(e=>[e.code||'—',e.name,e.dsg||'—',e.role,getPName(e.project),fmtN(e.salary)]),
+    foot:[['','','','','Total:',fmtN(total)]],
+    styles:{fontSize:9},headStyles:{fillColor:[15,76,129]},footStyles:{fillColor:[240,244,248],fontStyle:'bold'},
+    columnStyles:{5:{halign:'right'}},theme:'grid'});
+  addFooters(doc);doc.save('Employees_List.pdf');
+}
+
 function exportPnLPDF(){
   const sid=document.getElementById('pnl-filter')?.value;
   const projects=DB.get('projects'),bills=DB.get('bills'),receipts=DB.get('receipts'),expenses=DB.get('expenses'),purchases=DB.get('purchases');
@@ -1322,7 +1482,7 @@ function renderArchive(){
       <td style="font-size:11px;color:var(--tm)">${a._archDate||'—'}</td>
       <td style="font-size:11px">${a._archBy||'Admin'}</td>
       <td style="font-size:11px;color:var(--tm)">${keyDetail(a)}</td>
-      <td><button class="btn bp" style="font-size:11px;padding:4px 8px" onclick="restoreArchive(${list.length-1-i})">↩ Restore</button></td>
+      <td><div class="ab"><button class="btn bp" style="font-size:11px;padding:4px 8px" onclick="restoreArchive(${list.length-1-i})">↩ Restore</button><button class="btn bd" style="font-size:11px;padding:4px 8px" onclick="deleteArchiveRecord(${list.length-1-i})">🗑 Delete</button></div></td>
     </tr>`).join(''):
     '<tr class="er-row"><td colspan="6">No archived records yet. Deleted records will appear here.</td></tr>';
   // summary count
@@ -1348,6 +1508,40 @@ function restoreArchive(idx){
   renderArchive();
   log(`Restored: ${record._archType} "${record._archName||record.name||''}"`);
   alert('Record restored successfully!');
+}
+let _archDelPending=null;
+function deleteArchiveRecord(idx){
+  // idx is index in reversed list, convert to original (real archive array index)
+  const archive=DB.get('archive');
+  const realIdx=archive.length-1-idx;
+  const record=archive[realIdx];
+  if(!record)return;
+  _archDelPending=realIdx;
+  document.getElementById('arch-pw-input').value='';
+  document.getElementById('arch-pw-error').style.display='none';
+  document.getElementById('arch-del-name').textContent=record._archName||record.name||record.no||'this record';
+  document.getElementById('mo-archdel').classList.add('open');
+}
+function closeArchDel(){
+  document.getElementById('mo-archdel').classList.remove('open');
+  _archDelPending=null;
+}
+function confirmArchDel(){
+  const pwd=document.getElementById('arch-pw-input').value;
+  if(pwd!==DEL_PWD){
+    document.getElementById('arch-pw-error').style.display='block';
+    document.getElementById('arch-pw-input').value='';
+    document.getElementById('arch-pw-input').focus();
+    return;
+  }
+  if(_archDelPending===null)return closeArchDel();
+  const archive=DB.get('archive');
+  const record=archive[_archDelPending];
+  archive.splice(_archDelPending,1);
+  DB.set('archive',archive);
+  closeArchDel();
+  renderArchive();
+  log(`Permanently deleted from archive: ${record?._archType||''} "${record?._archName||record?.name||''}"`);
 }
 function clearArchive(){
   if(!confirm('Permanently delete ALL archived records? This cannot be undone.'))return;
@@ -1389,6 +1583,23 @@ renderDash();
   <div class="mf">
     <button class="btn bo" onclick="closePwDel()">Cancel</button>
     <button class="btn bd" onclick="confirmDel()">🗑 Delete & Archive</button>
+  </div>
+</div></div>
+
+<!-- ARCHIVE PERMANENT DELETE MODAL -->
+<div class="mo" id="mo-archdel"><div class="md" style="width:380px">
+  <div class="mh"><h3>🔐 Permanently Delete Archived Record</h3><button class="mc2" onclick="closeArchDel()">×</button></div>
+  <div class="mb">
+    <p style="font-size:13px;color:var(--tm);margin-bottom:14px">You are about to <strong>permanently</strong> delete "<span id="arch-del-name"></span>" from the archive. This cannot be undone and the record cannot be restored after this. Enter the admin password to confirm.</p>
+    <div class="fgr">
+      <label>Admin Password</label>
+      <input type="password" id="arch-pw-input" placeholder="Enter password..." onkeydown="if(event.key==='Enter')confirmArchDel()">
+    </div>
+    <div id="arch-pw-error" style="color:var(--er);font-size:12px;margin-top:8px;display:none">❌ Incorrect password. Please try again.</div>
+  </div>
+  <div class="mf">
+    <button class="btn bo" onclick="closeArchDel()">Cancel</button>
+    <button class="btn bd" onclick="confirmArchDel()">🗑 Delete Permanently</button>
   </div>
 </div></div>
 
